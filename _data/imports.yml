@@ -1657,7 +1657,7 @@ day:
           bulk: 0.306
           id: __day_3
         - url: https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.28/plugin/isSameOrBefore.js
-          integrity: sha256-Cgv1f1ZBQ2TxBlUqau/j+RtKB2N7upl6OfmjPiqxcc0=
+          integrity: sha256-G/G3wr7Ebl7nXX2pPyRRmdyi1vgGLhfrtP3W/4mwr8g=
           crossorigin: anonymous
           bulk: 0.309
           id: __day_4
