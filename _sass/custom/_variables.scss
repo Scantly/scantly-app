@@ -1,0 +1,33 @@
+/* == Fonts == */
+$font-heading:								"Montserrat";
+$font-branding:               "Montserrat";
+$font-general:								"Raleway", sans-serif;
+$font-weight-heading:					600;
+$font-weight-branding:        400;
+$font-weight:									400;
+$font-spacing-heading:				0.1rem;
+$font-line-spacing:           1.4;
+
+/* == Colours == */
+$colour-background: 					#ffffff;
+$colour-navigator:            rgba(#871f52, 0.1);
+$colour-navigator-input:      rgba(#871f52, 0.2);
+$colour-emphasis: 						#cccccc;
+$colour-foreground: 					darken($colour-emphasis, 10%);
+$colour-highlight:            #27a532;
+$colour-debug: 								#888888;
+$colour-busy-line:            #646464;
+$colour-create-fill:          #cc0099;
+$colour-load-fill:            #5b9e60;
+$colour-save-fill:            #ffaa00;
+$colour-delete-fill:          #e60000;
+$colour-commit-fill:          #5c5cd6;
+$colour-header:               transparentize($colour-background, 0.4);
+
+/* == Sizes == */
+$navigator-line:              1.1rem;
+$busy:                        0.9rem;
+
+/* == Backgrounds == */
+
+$static-background:           url(/backgrounds/denys-nevozhai-izC9Yob6DGM-unsplash.jpg);

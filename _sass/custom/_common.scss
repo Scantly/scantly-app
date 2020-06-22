@@ -1,0 +1,31 @@
+.bg-highlight {
+  background-color: $colour-highlight;
+}
+
+.text-highlight {
+  color: $colour-highlight;
+}
+
+.sa-navbar {
+  min-height: 4rem;
+  background-color: $colour-header;
+  box-shadow: -0.5rem 0.5rem 1rem rgba(0,0,0,0.4), inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+
+// -- Fill Colours -- //
+@each $colour, $value in $theme-colors {
+  .fill-#{$colour} {
+    fill: $value;
+  }
+}
+// -- Fill Colours -- //
+
+// -- Opacities -- //
+$opacities: ("100": 1, "90": 0.9, "80": 0.8, "70": 0.7, "60": 0.6, "50": 0.5);
+
+@each $name, $opacity in $opacities {
+  .o-#{$name} {
+    opacity: $opacity
+  }
+}
+// -- Opacities -- //

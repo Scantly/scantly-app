@@ -1,0 +1,14 @@
+{% raw %}
+<div {{#if id}}id="{{id}}_add"{{/if}} class="action-menu position-fixed mb-5 pb-4 mr-3 mr-lg-5 pr-xl-4{{#if list}} btn-float-dropdown dropdown{{/if}}">
+  {{#if list}}
+  	<button aria-expanded="false" aria-haspopup="true" class="btn btn-float btn-secondary dropup" data-toggle="dropdown" type="button">
+      <i class="material-icons">{{#if icon}}{{icon}}{{else}}add{{/if}}</i>
+  	</button>
+    <div class="dropdown-menu">
+      {{#each list}}<a class="btn btn-float{{#if class}} {{class}}{{else}} btn-light{{/if}} btn-sm" role="button" href="#{{action}}"><i class="material-icons{{#unless class}} text-dark{{/unless}}">{{icon}}</i></a>{{/each}}
+    </div>
+  {{else}}
+  	<a class="btn btn-float{{#if class}} {{class}}{{else}} btn-secondary{{/if}}" role="button"{{#if action}} href="#{{action}}"}{{/if}}><i class="material-icons{{#unless class}} text-light{{/unless}}">{{#if icon}}{{icon}}{{else}}add{{/if}}</i></a>
+  {{/if}}
+</div>
+{% endraw %}

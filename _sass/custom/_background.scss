@@ -1,0 +1,46 @@
+// -- Backgrounds -- //
+// ls -m | sed -e 's/\.jpg//g' //
+$backgrounds: (abbie-bernet-rHvXU-UB3Pg-unsplash, adam-bixby-VQzzoq-xUDA-unsplash,
+alexander-tsang-OYvwLpv740A-unsplash,
+alexander-tsang-RoKWVjHjJS4-unsplash,
+alexander-tsang-RwoCwR5rj04-unsplash, alex-tai-fKtVqZOJViE-unsplash,
+alex-tai-gIvbGYxzF_I-unsplash, ash-goldsbrough-YfgE8WCcZsQ-unsplash,
+baptiste-gousset-TkNFQiuZJ4Q-unsplash,
+brdnk-vision-sWATtqnhQmw-unsplash, callum-wale-3pH7TxHU6gw-unsplash,
+charles-forerunner-gapYVvUg1M8-unsplash,
+daniel-sessler-0x9J19qqe34-unsplash,
+denys-nevozhai-izC9Yob6DGM-unsplash, drew-beamer-ClOK8wibuYw-unsplash,
+erin-doering-8n7DuOJmN2Y-unsplash, florian-krumm-Fudi5uf5-m8-unsplash,
+franck-v-tDRLUWZboRQ-unsplash, frstvisuals-IGPqijrmxvs-unsplash,
+izzat-haqim-i1vhIWqy2oA-unsplash, jeanson-wong-CQGR_XlwTZk-unsplash,
+krisztian-tabori-zVQk9B16A3c-unsplash,
+kylie-de-guia-0FQK9CPw02E-unsplash, leon-seibert-QWLUXIiNhak-unsplash,
+logan-weaver-gR8lyLzK0zA-unsplash,
+lycs-architecture-u4-NB9dEsH8-unsplash,
+manny-moreno-uWscXisANmw-unsplash, marian-kroell-ZRG0jmE93Ng-unsplash,
+meric-dagli-BgcHN1KLfGw-unsplash, meric-dagli-xJ4BTjPlZFc-unsplash,
+mitchell-luo-hhdxtwlaAsM-unsplash, mitchell-luo-ZGi2-wTpKzM-unsplash,
+pierre-chatel-innocenti-34xbtrneFzQ-unsplash,
+ricardo-gomez-angel-keSfgkPfmkw-unsplash,
+ricardo-gomez-angel-VGrn4d6bn2A-unsplash,
+ricardo-gomez-angel-wf0md8BGHXk-unsplash,
+roman-manukyan-jm2IFr_uEWk-unsplash, rotekirsche20-aV31XuctrM8-unsplash,
+sean-pollock-PhYq704ffdA-unsplash, taylor-simpson-O2gq-357GlI-unsplash,
+tomas-robertson-Oa_MYSeDxuM-unsplash, yao-hu-kPxL9EApN6U-unsplash);
+
+@for $i from 1 through length($backgrounds) {
+  $background: nth($backgrounds, $i);
+  .background-#{$i} {
+    background: url("/backgrounds/#{$background}.jpg") no-repeat center center fixed, $black; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+}
+
+:root {
+  --background-min:1;
+  --background-max:#{length($backgrounds)};
+}
+// -- Backgrounds -- //

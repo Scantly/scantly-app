@@ -1,0 +1,82 @@
+---
+layout: compress
+modules:
+  - generic/flags
+  - generic/controller
+imports:
+  - name: underscore
+    load: first
+  - name: jquery_slim
+    load: first
+  - name: popper
+    load: first
+  - name: bootstrap-js
+    load: last
+  - name: urlparser
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: handlebars
+    load: last
+css:
+  primary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/root
+    - bootstrap/reboot
+    - bootstrap/type
+    - bootstrap/images
+    - bootstrap/grid
+    - bootstrap/buttons
+    - material/buttons
+    - bootstrap/dropdown
+    - bootstrap/nav
+    - bootstrap/navbar
+    - bootstrap/card
+    - bootstrap/badge
+    - bootstrap/utilities
+    - custom/variables
+    - custom/common
+    - custom/fonts
+  secondary:
+    - bootstrap/functions
+    - bootstrap/variables
+    - bootstrap/mixins
+    - bootstrap/transitions
+    - bootstrap/alert
+    - bootstrap/close
+    - bootstrap/modal
+    - bootstrap/tooltip
+    - bootstrap/popover
+    - custom/mixins/transitions
+    - custom/mixins/transforms
+    - custom/mixins/animations
+    - custom/mixins/select
+    - custom/variables
+    - custom/background
+---
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-gb">
+	
+	{% include plumbing/head.html %}
+
+	<body class="bg-transparent">
+    
+    <a class="skippy sr-only sr-only-focusable" href="#{{ site.app.content }}">
+      <span class="skippy-text">Skip to main content</span>
+    </a>
+    
+		{% include nav.html type="sticky-top" %}
+    
+		<div id="{{ site.app.content }}" class="{{ site.app.content }}">{{ content }}</div>
+		
+    {% include copyright.html %}
+    
+    {% include plumbing/footer.html type="page" %}
+    
+	</body>
+
+</html>

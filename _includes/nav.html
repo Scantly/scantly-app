@@ -1,0 +1,65 @@
+<header class="navbar navbar-expand flex-column flex-md-row sa-navbar">
+  
+  <a class="navbar-brand mr-0 mr-md-3" href="/" aria-label="Scantly">
+    <h2 class="d-inline-block m-0 text-uppercase"><span class="text-body">Scan</span><span class="text-light bg-highlight px-1 px-xl-2">tly</span></h2>
+  </a>
+
+  {% if page.app and page.layout == "app" %}<div class="navbar-nav-scroll">
+    <ul class="navbar-nav bd-navbar-nav flex-row">
+      <li class="nav-item">
+        <a class="nav-link" href="#overview">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled state-authenticated" href="#app">App</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#reader">Reader</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled state-authenticated" href="#manage">Manage</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="hide-reader ml-md-auto">
+    
+    <ul class="navbar-nav flex-row d-none d-md-flex">
+    
+      <li class="navbar-status mr-2 o-50" data-toggle="tooltip" data-placement="bottom" data-trigger="hover" title="App Status Display for Background Tasks">
+        <button type="button" class="btn btn-outline-status rounded waves-effect loader-small loader-dark d-none" style="opacity: 0;">
+          <span class="loading float-left">
+            <span class="d-block spinner"></span>
+          </span>
+          <i class="material-icons md-1 ml-2 float-right result result-success font-weight-bold d-none">check</i>
+          <i class="material-icons md-1 ml-2 float-right result result-failure d-none">error</i>
+          <span class="text ml-1"></span>
+          <span class="sr-only">App Status Display for Background Tasks</span>
+        </button>
+      </li>
+
+    </ul>
+
+    <div class="d-inline-flex flex-column flex-sm-row align-items-center mb-1 mb-md-0 ml-md-3">
+
+      <div id="auth_processing" class="form-inline mt-1 mt-md-0 text-muted font-weight-light waiting" style="display: none;">Checking</div>
+
+      <form id="sign_out" class="form-inline mt-1 mt-md-0" style="display: none;">
+        <span class="navbar-text mr-2"><span class="d-inline d-md-none d-lg-inline">Signed in as </span><a id="user_details" class="navbar-link username" target="_blank" href="https://security.google.com/settings/security/permissions" rel="noopener" data-toggle="tooltip" ></a></span>
+        <a class="btn my-0 btn-outline-action" href="#"><span>Sign Out</span></a>
+      </form>
+
+      <form id="sign_in" class="form-inline mt-1 mt-md-0" style="display: none;">
+        <a class="btn my-0 btn-outline-action" href="#">
+
+          <div class="google-logo-wrapper d-flex align-items-center">
+            <div class="google-logo d-flex">{% include images/google.svg %}</div>
+          </div>
+          <span class="d-none d-lg-inline">Sign in with Google</span><span class="d-inline d-lg-none">Sign In</span></a>
+
+      </form>
+
+    </div>
+    
+  </div>{% endif %}
+    
+</header>

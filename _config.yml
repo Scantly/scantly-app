@@ -1,0 +1,80 @@
+# Global
+safe:									true
+exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock, __tests__]
+include:							[_pages, _apps, _others, _extras, _scripts]
+timezone:							Europe/London
+
+# Dependencies
+markdown:							kramdown
+  
+# Styling
+sass:
+  sass_dir:						_sass
+  load_paths:
+                      - _sass
+                      - _sass/bootstrap
+                      - _sass/material
+                      - _sass/custom
+  style:							compressed
+
+# Compression
+compress_html:
+  comments:						all
+  clippings:					all
+  startings:					[]
+  endings:            []
+  artifacts:          [" /* */ ", " /* */", "/* */ ", "/* */", "/*jshint ignore:start*/", "/*jshint ignore:end*/"]
+  ignore:
+    envs:             [debug]
+
+# Permalinks
+permalink:						pretty
+
+# Setup
+title:                Scantly
+byline:								""
+  
+description:					"Simple. Secure. Safe. No-touch sign-in"
+url:									scantly.app
+baseurl:							/
+author:
+  name:								"Scantly"
+  url:								https://github.com/scantly
+
+# Collections
+collections:
+  apps:
+    output: true
+
+# Collection Defaults
+defaults:
+  - scope:
+      path: ""
+      type: tests
+    values:
+      sitemap:
+        exclude: true
+        
+# Custom variables
+version:							"0.1.0"
+launched:							"2020"
+debug:                "debug"
+performance:          "perf"
+compress:             "compress"
+array:                []
+icon:                 "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAAypScAMqUnBTKlJy4ypSdIMqUnSTKlJ0kypSdJMqUnSTKlJ0kypSdJMqUnSTKlJ0kypSdIMqUnLjKlJwQypScAMqUnAzKlJ3EypSfkMqUn9DKlJ/QypSf0MqUn9DKlJ/QypSf0MqUn9DKlJ/QypSf0MqUn9DKlJ+QypSdvMqUnAzKlJy4ypSfiMqUn/zKlJ/8ypSf/MaUm/y+kJP8voyP/L6Qj/zCkJf8ypSf/MqUn/zKlJ/8ypSf/MqUn4TKlJywypSdIMqUn8zKlJ/8ypSf/MqUn/z+rNf9fuVb/dMJt/3LBa/9VtEz/NaYq/zGlJv8ypSf/MqUn/zKlJ/IypSdFMqUnSTKlJ/QypSf/MKQl/1W0TP/P6sz/9fr0//b79v/3+/b/7ffs/5vTlf85qC7/MqUm/zKlJ/8ypSfzMqUnRjKlJ0kypSf0MqUn/zCkJf9NsUP/u+G3/4/Oif9ovV//bL5k/83py//3/Pf/aL1g/y+kJP8ypSf/MqUn8zKlJ0YypSdJMqUn9DKlJ/8ypSf/M6Uo/zenLP8vpCP/Oqkw/1i2T//H5sT//////3bDb/8vpCP/MqUn/zKlJ/MypSdGMqUnSTKlJ/QypSf/MqUn/zGlJv9UtEv/otad/9Xs0v/z+vP//P78/8Tlwf9Hrj3/MaQm/zKlJ/8ypSfzMqUnRjKlJ0kypSf0MqUn/zGkJv9Irj7/1OzS//z+/P/W7dT/qNmj/3bDbv9BrDf/MaQm/zKlJ/8ypSf/MqUn8zKlJ0YypSdJMqUn9DKlJ/8vpCT/YbpZ//j8+P/K6Mj/Qqw3/y6jIv8zpij/O6kx/zKlJ/8ypSf/MqUn/zKlJ/MypSdGMqUnSTKlJ/QypSf/MKQl/0qvQP/d8Nv/7/jv/6XYof+W0ZH/v+O7/6rapv82pyv/MqUn/zKlJ/8ypSfzMqUnRjKlJ0kypSf0MqUn/zKlJ/8xpSb/Zrxd/8Tlwf/p9ef/7Pfr/93w2/+b05X/Oagu/zKlJ/8ypSf/MqUn8zKlJ0YypSdIMqUn8zKlJ/8ypSf/MqUn/zCkJf85qC7/S7BB/06xRf9BrDf/M6Uo/zKlJ/8ypSf/MqUn/zKlJ/IypSdFMqUnLjKlJ+IypSf/MqUn/zKlJ/8ypSf/MqUm/zCkJf8wpCX/MaUm/zKlJ/8ypSf/MqUn/zKlJ/8ypSfhMqUnLDKlJwMypSdvMqUn4zKlJ/MypSfzMqUn8zKlJ/MypSfzMqUn8zKlJ/MypSfzMqUn8zKlJ/MypSfjMqUnbTKlJwMypScAMqUnBDKlJywypSdFMqUnRjKlJ0YypSdGMqUnRjKlJ0YypSdGMqUnRjKlJ0YypSdFMqUnLDKlJwQypScAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAEAAA=="
+
+# Extras
+analytics:
+  id:									"UA-53673057-14"
+  type:               "gtag"
+  scroll:							true
+  enable:							false
+  
+app:
+  content:            content
+  namespace:          scantly
+  tests:              _tests
+  
+backgrounds:
+  static:             "denys-nevozhai-izC9Yob6DGM-unsplash.jpg"

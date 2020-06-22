@@ -1,0 +1,85 @@
+env:
+  browser: true
+  es6: true
+  jest: true
+extends: 'eslint:recommended'
+rules:
+  indent:
+    - off
+    - tab
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - double
+  semi:
+    - error
+    - always
+  no-cond-assign: [1, except-parens]
+  no-const-assign: 1
+  no-useless-escape: 0
+globals:
+  $: false
+  jQuery: false
+  hello: false
+  Handlebars: true
+  loki: false
+  google: false
+  gapi: false
+  localforage: false
+  dayjs: false
+  _: false
+  Waves: false
+  Mousetrap: false
+  chrome: false
+  chai: false
+  chance: false
+  autosize: false
+  jsyaml: false
+  saveAs: false
+  importScripts: false
+  jsQR: false
+  moment: false
+  quotedPrintable: false
+  objectHash: false
+  GOOGLE_SCOPES: false
+  GOOGLE_CLIENT_ID: false
+  GOOGLE_KEY: false
+  Google_API: true
+  Github_API: true
+  Colours: true
+  Config: true
+  Data: true
+  Notify: true
+  Query: true
+  Link: true
+  Scroll: true
+  Url: true
+  Strings: true
+  Table: true
+  Tabulate: true
+  Display: true
+  App: true
+  Flags: true
+  Controller: true
+  Css: true
+  Dates: true
+  Main: true
+  Service: true
+  Network: true
+  Router: true
+  Items: true
+  Dialog: true
+  Fields: true
+  Exporter: true
+  Filters: true
+  Saver: true
+  Google_Sheets_Grid: true
+  Google_Sheets_Metadata: true
+  Google_Sheets_Notation: true
+  Google_Sheets_Format: true
+  Google_Sheets_Properties: true
+  SaaD: true
+  Reader: true
+  States: true

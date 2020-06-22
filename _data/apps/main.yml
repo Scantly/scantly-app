@@ -1,0 +1,86 @@
+########################################################################################
+#                                                                                      #
+#    .----------------.  .----------------.  .----------------.  .-----------------.   #
+#   | .--------------. || .--------------. || .--------------. || .--------------. |   #
+#   | | ____    ____ | || |      __      | || |     _____    | || | ____  _____  | |   #
+#   | ||_   \  /   _|| || |     /  \     | || |    |_   _|   | || ||_   \|_   _| | |   #
+#   | |  |   \/   |  | || |    / /\ \    | || |      | |     | || |  |   \ | |   | |   #
+#   | |  | |\  /| |  | || |   / ____ \   | || |      | |     | || |  | |\ \| |   | |   #
+#   | | _| |_\/_| |_ | || | _/ /    \ \_ | || |     _| |_    | || | _| |_\   |_  | |   #
+#   | ||_____||_____|| || ||____|  |____|| || |    |_____|   | || ||_____|\____| | |   #
+#   | |              | || |              | || |              | || |              | |   #
+#   | '--------------' || '--------------' || '--------------' || '--------------' |   #
+#    '----------------'  '----------------'  '----------------'  '----------------'    #
+#                                                                                      #
+########################################################################################
+link: /
+imports:
+  - name: underscore
+    load: first
+  - name: jquery_slim
+    load: first
+  - name: popper
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: day
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: jsqr
+    load: lazy
+helpers:
+  - network
+  - strings
+  - google
+  - css
+  - handlebars
+modules:
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
+  - main/states
+  - main/reader
+scripts: 
+  - extends/regex
+  - extends/array
+  - extends/math
+css:
+  primary:
+    - custom/home
+templates:
+  - generic/text
+  - loader
+  - main/actions
+  - main/reader
+docs:
+  - main/PUBLIC
+  - main/FEATURES
+  - main/README
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+keys:
+  google:
+      oauth: 27787712718-se20fm7rvk582bgblm33ahlacjp2r659.apps.googleusercontent.com
