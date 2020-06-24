@@ -62,6 +62,21 @@ Reader = (options, factory) => {
         _last = code;
         _output.removeClass("d-none").text(`${prefix} | ${code.data}`);
         factory.Flags.log("QR Code", code);
+        var _data = code.data.split("|");
+        if (_data.length > 1) {
+          if (_data[0] == "USR" && _data.length === 4) {
+            options.functions.client.log(_data[1], _data[2], _data[3], "TESTING")
+              .then(result => {
+                if (result.result) {
+                  var _result = result.result === true ? "bg-success" : "bg-danger";
+                  $(_element.parentElement).addClass(_result).delay(3000).queue(function(next){
+                    $(this).removeClass(_result);
+                    next();
+                  });
+                }
+              });
+          }
+        }
       }
       _.delay(() => {
         _output.addClass("d-none");

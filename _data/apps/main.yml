@@ -17,7 +17,7 @@ link: /
 imports:
   - name: underscore
     load: first
-  - name: jquery_slim
+  - name: jquery
     load: first
   - name: popper
     load: first
@@ -37,7 +37,13 @@ imports:
     load: last
   - name: waves-js
     load: last
+  - name: mousetrap
+    load: last
   - name: jsqr
+    load: lazy
+  - name: jshashes
+    load: lazy
+  - name: fetchjsonp
     load: lazy
 helpers:
   - network
@@ -45,6 +51,7 @@ helpers:
   - google
   - css
   - handlebars
+  - backgrounds
 modules:
   - generic/dates
   - generic/flags
@@ -55,6 +62,8 @@ modules:
   - generic/router
   - main/states
   - main/reader
+  - main/client
+  - main/code
 scripts: 
   - extends/regex
   - extends/array
@@ -67,6 +76,8 @@ templates:
   - loader
   - main/actions
   - main/reader
+  - main/cards
+  - main/card
 docs:
   - main/PUBLIC
   - main/FEATURES

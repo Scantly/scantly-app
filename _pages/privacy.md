@@ -4,4 +4,5 @@ permalink: /privacy
 title: Privacy
 simple: true
 ---
-<div class="t"><div class="c"><h2 class="font-sensitive m-0"><span class="text-dark">Privacy Information</span></h2></div></div>
+Privacy
+{:.titles .display-4 .bg-light .ml-3 .ml-xl-4 .px-1}

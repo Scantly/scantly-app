@@ -1,0 +1,28 @@
+{% raw %}
+<div id="{{id}}_QR" class="card border-success mb-3 mx-auto" style="max-width: {{width}}px;">
+  <div class="text-center p-0">
+    <div class="card-header border-success text-primary font-weight-bold">
+      <a data-toggle="collapse" href="#{{id}}_QR_FULL">{{name}}</a>
+    </div>
+    <div class="card-body p-0">
+      <img class="img-fluid mx-auto d-block rounded" src="{{{qr}}}" />	
+    </div>
+    <div class="card-footer bg-transparent border-success">
+      <div class="d-flex flex-row justify-content-between">
+        <a href="#"><span class="material-icons">file_download</span></a>
+        <a href="#"><span class="material-icons">print</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="{{id}}_QR_FULL" class="collapse bg-dark h-100 w-100" style="position: fixed; top: 0; left: 0; z-index: 9999;"
+     onclick="event.preventDefault(); document.getElementById('{{id}}_QR_FULL').classList.remove('show');">
+  <div style="display:table; width: 100vw; height: 100vh;">
+    <div style="display:table-cell; vertical-align:middle; width: 100vw;">
+      <div class="mx-auto text-center">
+        <img class="img-fluid" src="{{{qr}}}" />
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}

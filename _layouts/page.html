@@ -3,6 +3,12 @@ layout: compress
 modules:
   - generic/flags
   - generic/controller
+  - generic/service
+  - page
+helpers:
+  - backgrounds
+scripts: 
+  - extends/math
 imports:
   - name: underscore
     load: first
@@ -17,8 +23,6 @@ imports:
   - name: waves-css
     load: last
   - name: waves-js
-    load: last
-  - name: handlebars
     load: last
 css:
   primary:
@@ -41,6 +45,7 @@ css:
     - custom/variables
     - custom/common
     - custom/fonts
+    - custom/home
   secondary:
     - bootstrap/functions
     - bootstrap/variables

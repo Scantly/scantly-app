@@ -128,7 +128,7 @@
 // -- Action Menu -- //
 
 // -- Reader -- //
-#canvas .canvas {
+.canvas {
   transform: scaleX(-1);
   @media screen and (orientation:portrait) {
     height: 60vh;
@@ -137,4 +137,27 @@
     width: 50vw; 
   }
 }
+
+.notifier {
+  @include transition(background-color 600ms ease-in-out);
+}
 // -- Reader -- //
+
+// -- Center -- //
+.t {
+  display:table;
+  position:absolute;
+  height:100%;
+  width:100%;
+}
+
+.c {
+  display:table-cell;
+  vertical-align:middle;
+}
+
+.i {
+  margin-left:auto;
+  margin-right:auto;
+}
+// -- Center -- //

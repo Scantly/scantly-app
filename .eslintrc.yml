@@ -43,6 +43,7 @@ globals:
   moment: false
   quotedPrintable: false
   objectHash: false
+  fetchJsonp: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -83,3 +84,6 @@ globals:
   SaaD: true
   Reader: true
   States: true
+  Client: true
+  Code: true
+  Backgrounds: true

@@ -371,6 +371,7 @@ Main = function() {
 
     /* <!-- Delete Objects dependent on being Logged in --> */
     delete ಠ_ಠ.Google;
+    delete ಠ_ಠ.me;
 
     /* <!-- Clean and Hide the Auth Processing --> */
     $("#auth_processing").hide();

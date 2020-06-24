@@ -1,5 +1,6 @@
 // -- Backgrounds -- //
 // ls -m | sed -e 's/\.jpg//g' //
+// for F in *.jpg; do cwebp $F -o `basename ${F%.jpg}`.webp; done //
 $backgrounds: (abbie-bernet-rHvXU-UB3Pg-unsplash, adam-bixby-VQzzoq-xUDA-unsplash,
 alexander-tsang-OYvwLpv740A-unsplash,
 alexander-tsang-RoKWVjHjJS4-unsplash,
@@ -32,6 +33,13 @@ tomas-robertson-Oa_MYSeDxuM-unsplash, yao-hu-kPxL9EApN6U-unsplash);
   $background: nth($backgrounds, $i);
   .background-#{$i} {
     background: url("/backgrounds/#{$background}.jpg") no-repeat center center fixed, $black; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .webp-background-#{$i} {
+    background: url("/backgrounds/#{$background}.webp") no-repeat center center fixed, $black; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

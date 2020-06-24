@@ -25,7 +25,7 @@ App = function() {
   
   FN.view = {
     
-    app: () => Promise.resolve(true),
+    app: () => FN.client.endpoints().then(FN.code.cards).then(ಠ_ಠ.Main.busy("Fetching Codes")),
     
     reader: () => FN.reader.scan(),
     
@@ -42,16 +42,16 @@ App = function() {
 
       /* <!-- Set Up / Create the States Module --> */
       FN.states = ಠ_ಠ.States();
+      
+      FN.backgrounds = ಠ_ಠ.Backgrounds();
 
     },
 
     /* <!-- Start App after fully loaded (but BEFORE routing or authentication) --> */
     initial: () => {
-
+      
       /* <!-- Set Random Background --> */
-      document.body.classList.add(`background-${Math.randomInteger(
-        parseInt(getComputedStyle(document.documentElement).getPropertyValue("--background-min"), 10),        
-        parseInt(getComputedStyle(document.documentElement).getPropertyValue("--background-max"), 10)) || 1}`);
+      FN.backgrounds.set();
       
       /* <!-- Setup Helpers --> */
       _.each([{
@@ -66,7 +66,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Reader"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each(["Reader", "Client", "Code"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -86,6 +86,12 @@ App = function() {
       /* <!-- Set the Initial State --> */
       ಠ_ಠ.Display.state().change(FN.states.views, FN.states.overview.in);
       
+      /* <!-- Bind Escape --> */
+      if (window.Mousetrap) {
+        window.Mousetrap.unbind("esc");
+        window.Mousetrap.bind("esc", () => $(".collapse.show").removeClass("show"));
+      }
+        
     },
 
   };
@@ -149,8 +155,8 @@ App = function() {
               min: 0,
               max: 1
             },
-            requires: "jsqr",
-            keys: ["ctrl+alt+r", "ctrl+alt+R"],
+            requires: ["jsqr", "fetchjsonp"],
+            keys: ["ctrl+alt+r", "ctrl+alt+R", "ctrl+alt+g", "ctrl+alt+G"],
             fn: command => FN.view.reader(command).then(FN.state(FN.states.views, FN.states.reader.in, "Reader"))
           },
           
@@ -161,7 +167,18 @@ App = function() {
               max: 1,
             },
             fn: command => FN.reader.swap(command)
+          },
+          
+          test: {
+            matches: /TEST/i,
+            length: {
+              min: 0,
+              max: 1,
+            },
+            requires: "fetchjsonp",
+            fn: command => FN.client.test(command)
           }
+          
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });
