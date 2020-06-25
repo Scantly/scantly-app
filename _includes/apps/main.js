@@ -25,11 +25,11 @@ App = function() {
   
   FN.view = {
     
-    app: () => FN.client.endpoints().then(FN.code.cards).then(ಠ_ಠ.Main.busy("Fetching Codes")),
+    codes: () => FN.client.endpoints().then(FN.code.cards).then(ಠ_ಠ.Main.busy("Fetching Codes")),
     
-    reader: () => FN.reader.scan(),
+    reader: location => FN.reader.read(location),
     
-    manage: () => Promise.resolve(true),
+    manage: () => FN.client.locations().then(FN.code.locations).then(ಠ_ಠ.Main.busy("Fetching Details")),
     
   };
 	/* <!-- Internal Functions --> */
@@ -120,24 +120,32 @@ App = function() {
         start: FN.setup.routed,
         routes: {
           
-          app: {
-            matches: /APP/i,
+          codes: {
+            matches: /CODES/i,
             state: "authenticated",
             length: 0,
             keys: ["ctrl+alt+a", "ctrl+alt+A"],
-            fn: () => FN.view.app().then(FN.state(FN.states.views, FN.states.app.in, "App"))
+            fn: () => FN.view.codes().then(FN.state(FN.states.views, FN.states.codes.in, "Codes"))
           },
           
           manage: {
             matches: /MANAGE/i,
             state: "authenticated",
             length: 0,
-            scopes: [
-              "https://www.googleapis.com/auth/script.projects",
-            ],
-            permissive: true,
             keys: ["ctrl+alt+m", "ctrl+alt+M"],
-            fn: () => FN.view.manage().then(FN.state(FN.states.views, FN.states.manage.in, "Manage"))
+            requires: ["clipboard"],
+            fn: () => FN.view.manage().then(FN.state(FN.states.views, FN.states.manage.in, "Manage")),
+            routes : {
+              create: {
+                matches: /CREATE/i,
+                length: 0,
+                scopes: [
+                  "https://www.googleapis.com/auth/script.projects",
+                ],
+                permissive: true,
+                fn: () => true
+              }
+            }
           },
           
           overview: {

@@ -7,12 +7,10 @@ States = () => {
 
   /* <!-- Internal Constants --> */
   const STATE_OVERVIEW = "overview",
-        STATE_APP = "app",
+        STATE_CODES = "codes",
         STATE_READER = "reader",
         STATE_MANAGE = "manage",
-        STATES = [
-                  STATE_OVERVIEW, STATE_APP, STATE_READER, STATE_MANAGE,
-          ];
+        STATES = [STATE_OVERVIEW, STATE_CODES, STATE_READER, STATE_MANAGE];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -36,8 +34,8 @@ States = () => {
       in : STATE_OVERVIEW,
     },
     
-    app: {
-      in : STATE_APP,
+    codes: {
+      in : STATE_CODES,
     },
     
     reader : {
@@ -50,7 +48,7 @@ States = () => {
     
     views : [
       STATE_OVERVIEW,
-      STATE_APP,
+      STATE_CODES,
       STATE_READER,
       STATE_MANAGE,
     ],

@@ -28,7 +28,7 @@ Reader = (options, factory) => {
   /* <!-- Internal Options --> */
 
   /* <!-- Internal Variables --> */
-  var _element, _canvas, _video, _output, _last, _cameras, _current;
+  var _element, _canvas, _video, _output, _last, _cameras, _current, _location;
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
@@ -65,9 +65,9 @@ Reader = (options, factory) => {
         var _data = code.data.split("|");
         if (_data.length > 1) {
           if (_data[0] == "USR" && _data.length === 4) {
-            options.functions.client.log(_data[1], _data[2], _data[3], "TESTING")
+            options.functions.client.log(_data[1], _data[2], _data[3], _location ? _location.value : null, _location ? _location.key : null)
               .then(result => {
-                if (result.result) {
+                if (result && result.result !== null && result.result !== undefined) {
                   var _result = result.result === true ? "bg-success" : "bg-danger";
                   $(_element.parentElement).addClass(_result).delay(3000).queue(function(next){
                     $(this).removeClass(_result);
@@ -75,6 +75,12 @@ Reader = (options, factory) => {
                   });
                 }
               });
+          } else if (_data[0] == "LOC" && _data.length === 3) {
+            _location = {
+              value: _data[1],
+              key: _data[2]
+            };
+            factory.Flags.log("LOCATION SET:", _location);
           }
         }
       }
@@ -96,7 +102,7 @@ Reader = (options, factory) => {
   };
   
   var _finaliser = (node, stream) => new MutationObserver((list, observer) => _.find(list, 
-     value => value.type === "childList" && value.removedNodes.length > 0 && value.removedNodes[0].id === options.id ?
+     value => value.type === "childList" && value.removedNodes.length > 0 && _.find(value.removedNodes, removed => removed.id === options.id) ?
       (observer.disconnect(), stream.getTracks().forEach(track => track.stop()), true) : false))
       .observe(node, {childList : true});
   /* <!-- Internal Functions --> */
@@ -147,10 +153,11 @@ Reader = (options, factory) => {
     }).then(reader => navigator.mediaDevices.getUserMedia({
       video: id ? {
         deviceId: id
-      } :  {
+      } : {
         facingMode: "user"
       }
     }).then(stream => {
+      _finaliser(reader[0].parentNode, stream);
       _current = stream.getVideoTracks()[0].getSettings().deviceId;
       _video.srcObject = stream;
       _video.setAttribute("playsinline", true);
@@ -169,7 +176,6 @@ Reader = (options, factory) => {
             });
         })
         .catch(e => factory.Flags.error("Camera Enumeration:", e));
-      _finaliser(reader[0].parentNode, stream);
     }));
   
   FN.swap = command => {
@@ -178,6 +184,14 @@ Reader = (options, factory) => {
       _index = _index >= _cameras.length - 1 ? 0 : _index + 1;
       FN.scan(_cameras[_index].deviceId);
     }
+  };
+  
+  FN.read = location => {
+    if (location) _location = {
+      value: location[0],
+      key: location[1]
+    };
+    return FN.scan();
   };
   /* <!-- Public Functions --> */
 

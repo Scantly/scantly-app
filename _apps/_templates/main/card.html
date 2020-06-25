@@ -1,16 +1,28 @@
 {% raw %}
-<div id="{{id}}_QR" class="card border-success mb-3 mx-auto" style="max-width: {{width}}px;">
+<div id="{{id}}_QR" class="card border-success mb-4 mb-lg-3" style="z-index: 1050;{{#if widths}} min-width: {{widths.min}}px; max-width: {{widths.max}}px;{{/if}}">
   <div class="text-center p-0">
     <div class="card-header border-success text-primary font-weight-bold">
-      <a data-toggle="collapse" href="#{{id}}_QR_FULL">{{name}}</a>
+      <div class="d-flex flex-row justify-content-{{#if icon}}between{{else}}around{{/if}}">
+        <a data-toggle="collapse" href="#{{id}}_QR_FULL">{{name}}</a>
+        {{~#if icon}}<span class="material-icons text-success"{{#if icon_title}} data-toggle="tooltip" title="{{icon_title}}{{/if}}">{{icon}}</span>{{~/if~}}
+      </div>
     </div>
     <div class="card-body p-0">
       <img class="img-fluid mx-auto d-block rounded" src="{{{qr}}}" />	
     </div>
-    <div class="card-footer bg-transparent border-success">
+    <div class="card-footer bg-transparent border-success text-muted">
       <div class="d-flex flex-row justify-content-between">
-        <a href="#"><span class="material-icons">file_download</span></a>
-        <a href="#"><span class="material-icons">print</span></a>
+        {{~#if link~}}<a href="#" data-toggle="tooltip" title="Click to copy QR Code Link"
+                         class="link" data-clipboard-text="{{link}}">
+          <span class="material-icons">link</span>
+        </a>{{~/if~}}
+        {{~#unless link~}}<a href="#">
+          <span class="material-icons">file_download</span>
+        </a>{{~/unless~}}
+        {{~#if notes~}}<span>{{notes}}</span>{{~/if~}}
+        {{~#unless link~}}<a href="#">
+          <span class="material-icons">print</span>
+        </a>{{~/unless~}}
       </div>
     </div>
   </div>

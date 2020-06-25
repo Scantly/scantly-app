@@ -45,6 +45,8 @@ imports:
     load: lazy
   - name: fetchjsonp
     load: lazy
+  - name: clipboard
+    load: lazy
 helpers:
   - network
   - strings
@@ -82,6 +84,9 @@ docs:
   - main/PUBLIC
   - main/FEATURES
   - main/README
+  - main/CARDS
+  - main/DEMO
+  - main/MANAGE
 scopes:
   google:
     - scope: email

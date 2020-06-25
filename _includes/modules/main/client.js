@@ -21,14 +21,23 @@ Client = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.log = (endpoint, user, key, location) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&k=${key}&l=${s.base64.encode(location || "")}`)
+  FN.log = (endpoint, user, key, location_value, location_key) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&k=${key}&l_v=${s.base64.encode(location_value || "")}&l_k=${location_key || ""}`)
     .then(response => response.json())
     .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
   
   FN.endpoints = () => factory.Google.execute(options.directory, "list")
     .then(value => (value && value.done ? 
-          value.response.error ? factory.Flags.error("Directory Error", value = value.response.error) :
-          value.response.result ? factory.Flags.log("API Response", value = value.response.result) : null : null, value));
+          value.error ? 
+                    factory.Flags.error("Directory Error", value = value.error) :
+          value.response && value.response.result ? 
+                    factory.Flags.log("API Response", value = value.response.result) : null : null, value));
+  
+  FN.locations = () => factory.Google.execute(options.directory, "manage")
+    .then(value => (value && value.done ? 
+          value.error ? 
+                    factory.Flags.error("Directory Error", value = value.error) :
+          value.response && value.response.result ? 
+                    factory.Flags.log("API Response", value = value.response.result) : null : null, value));
   /* <!-- Public Functions --> */
   
   return FN;
