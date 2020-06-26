@@ -11,6 +11,8 @@ Reader = (options, factory) => {
       success: "#00FF00",
       failure: "#FF0000",
       worker: window.Worker ? true : false,
+      holdoff: 5000,
+      highlight: 3000,
     },
     FN = {},
     SYNC = {
@@ -28,24 +30,51 @@ Reader = (options, factory) => {
   /* <!-- Internal Options --> */
 
   /* <!-- Internal Variables --> */
-  var _element, _canvas, _video, _output, _last, _cameras, _current, _location;
+  var s = factory.Strings(),
+      ರ‿ರ = {};
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _render = () => Promise.resolve(factory.Display.template.show({
+  var _render = () => Promise.resolve(ರ‿ರ.display = factory.Display.template.show({
           template: "reader",
           id: options.id,
+          location: ರ‿ರ.location,
           target: factory.container,
           clear: true,
         }));
   
+  var _location = location => {
+    if (location && location.length == 2) {
+      ರ‿ರ.location = {
+        raw: s.base64.decode(location[0]),
+        key: location[1]
+      };
+      ರ‿ರ.location.parsed = /^(.+)\s+<=\s+(\d{4}-\d{2}-\d{2}$)/gi.exec(ರ‿ರ.location.raw);
+      ರ‿ರ.location.valid = new Date().toISOString().split("T")[0] <= ರ‿ರ.location.parsed[2] ? true : false;
+      ರ‿ರ.location.value = ರ‿ರ.location.parsed[1];
+      factory.Flags.log("READER LOCATION SET:", ರ‿ರ.location);
+    } else {
+      delete ರ‿ರ.location;
+    }
+
+    if (ರ‿ರ.display) factory.Display.template.show({
+          template: "location",
+          id: options.id,
+          location: ರ‿ರ.location,
+          target: ರ‿ರ.display.find(`#${options.id}_location`),
+          replace: true,
+        });
+    
+    return ರ‿ರ.location;
+  };
+  
   var _drawLine = (begin, end, colour) => {
-      _canvas.beginPath();
-      _canvas.moveTo(begin.x, begin.y);
-      _canvas.lineTo(end.x, end.y);
-      _canvas.lineWidth = 4;
-      _canvas.strokeStyle = colour;
-      _canvas.stroke();
+      ರ‿ರ.canvas.beginPath();
+      ರ‿ರ.canvas.moveTo(begin.x, begin.y);
+      ರ‿ರ.canvas.lineTo(end.x, end.y);
+      ರ‿ರ.canvas.lineWidth = 4;
+      ರ‿ರ.canvas.strokeStyle = colour;
+      ರ‿ರ.canvas.stroke();
     };
   
   var _drawBox = (location, colour) => {
@@ -55,56 +84,68 @@ Reader = (options, factory) => {
     _drawLine(location.bottomLeftCorner, location.topLeftCorner, colour);
   };
   
+  var _decay = (element, value) => element.addClass(value).delay(options.highlight)
+    .queue(function(next) {
+      $(this).removeClass(value);
+      next();
+    });
+  
+  var _highlightReader = value => _decay($(ರ‿ರ.element.parentElement), value);
+  
+  var _showPresence = value => _decay(ರ‿ರ.display.find(`.presence-${value}`), "show");
+  
   var _code = (code, restart, prefix) => {
     _drawBox(code.location, code.data ? options.success : options.failure);
     if (code.data) {
-      if (!_last || _last.data != code.data) {
-        _last = code;
-        _output.removeClass("d-none").text(`${prefix} | ${code.data}`);
-        factory.Flags.log("QR Code", code);
+      if (!ರ‿ರ.last || ರ‿ರ.last.code.data != code.data || Date.now() - ರ‿ರ.last.when > options.holdoff) {
+        ರ‿ರ.last = {
+          when : Date.now(),
+          code : code,
+        };
+        if (factory.Flags.debug()) {
+          ರ‿ರ.output.removeClass("d-none").text(`${prefix} | ${code.data}`);
+          factory.Flags.log("QR Code", code);
+        }
         var _data = code.data.split("|");
         if (_data.length > 1) {
           if (_data[0] == "USR" && _data.length === 4) {
-            options.functions.client.log(_data[1], _data[2], _data[3], _location ? _location.value : null, _location ? _location.key : null)
+            options.functions.client.log(_data[1], _data[2], _data[3], 
+                                         ರ‿ರ.location ? ರ‿ರ.location.raw : null, ರ‿ರ.location ? ರ‿ರ.location.key : null)
               .then(result => {
                 if (result && result.result !== null && result.result !== undefined) {
-                  var _result = result.result === true ? "bg-success" : "bg-danger";
-                  $(_element.parentElement).addClass(_result).delay(3000).queue(function(next){
-                    $(this).removeClass(_result);
-                    next();
-                  });
+                  _highlightReader(result.result === true ? "bg-success" : "bg-danger");
+                  if (result.presence !== null && result.presence !== undefined) _showPresence(result.presence);
                 }
               });
           } else if (_data[0] == "LOC" && _data.length === 3) {
-            _location = {
-              value: _data[1],
-              key: _data[2]
-            };
-            factory.Flags.log("LOCATION SET:", _location);
+            var _result = _location(_data.splice(1, 2));
+            _highlightReader(_result && _result.valid === true ? "bg-success" : "bg-danger");
           }
         }
       }
+      
       _.delay(() => {
-        _output.addClass("d-none");
-        restart();
-      }, 3000);
+          if (factory.Flags.debug()) ರ‿ರ.output.addClass("d-none");
+          restart();
+        }, options.highlight);
+      
       return true;
     }
   };
   
   var _refresh = () => {
-    if (_video.readyState === _video.HAVE_ENOUGH_DATA) {
-      _element.height = _video.videoHeight;
-      _element.width = _video.videoWidth;
-      _canvas.drawImage(_video, 0, 0, _element.width, _element.height);
-      return _canvas.getImageData(0, 0, _element.width, _element.height);
+    if (ರ‿ರ.video.readyState === ರ‿ರ.video.HAVE_ENOUGH_DATA) {
+      ರ‿ರ.element.height = ರ‿ರ.video.videoHeight;
+      ರ‿ರ.element.width = ರ‿ರ.video.videoWidth;
+      ರ‿ರ.canvas.drawImage(ರ‿ರ.video, 0, 0, ರ‿ರ.element.width, ರ‿ರ.element.height);
+      return ರ‿ರ.canvas.getImageData(0, 0, ರ‿ರ.element.width, ರ‿ರ.element.height);
     }
   };
   
   var _finaliser = (node, stream) => new MutationObserver((list, observer) => _.find(list, 
      value => value.type === "childList" && value.removedNodes.length > 0 && _.find(value.removedNodes, removed => removed.id === options.id) ?
       (observer.disconnect(), stream.getTracks().forEach(track => track.stop()), true) : false))
-      .observe(node, {childList : true});
+      .observe(node, {childList : true});  
   /* <!-- Internal Functions --> */
   
   /* <!-- Sync Functions --> */
@@ -145,10 +186,10 @@ Reader = (options, factory) => {
   
   /* <!-- Public Functions --> */
   FN.scan = id => _render().then(reader => {
-      _element = reader.find("canvas")[0],
-      _canvas = _element.getContext("2d");
-      _video = document.createElement("video");
-      _output = reader.find(".output");
+      ರ‿ರ.element = reader.find("canvas")[0];
+      ರ‿ರ.canvas = ರ‿ರ.element.getContext("2d");
+      ರ‿ರ.video = document.createElement("video");
+      ರ‿ರ.output = reader.find(".output");
       return reader;
     }).then(reader => navigator.mediaDevices.getUserMedia({
       video: id ? {
@@ -158,15 +199,15 @@ Reader = (options, factory) => {
       }
     }).then(stream => {
       _finaliser(reader[0].parentNode, stream);
-      _current = stream.getVideoTracks()[0].getSettings().deviceId;
-      _video.srcObject = stream;
-      _video.setAttribute("playsinline", true);
-      _video.play();
+      ರ‿ರ.current = stream.getVideoTracks()[0].getSettings().deviceId;
+      ರ‿ರ.video.srcObject = stream;
+      ರ‿ರ.video.setAttribute("playsinline", true);
+      ರ‿ರ.video.play();
       options.worker ? WORKER.run(WORKER.scan) : SYNC.run(SYNC.scan);
       if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) navigator.mediaDevices.enumerateDevices()
         .then(devices => _.filter(devices, device => device.kind == "videoinput"))
         .then(cameras => {
-          _cameras = cameras;
+          ರ‿ರ.cameras = cameras;
           if (cameras.length > 1) factory.Display.template.show({
               template: "actions",
               id: `${options.id}_actions`,
@@ -180,17 +221,14 @@ Reader = (options, factory) => {
   
   FN.swap = command => {
     if (command == "camera") {
-      var _index = _.findIndex(_cameras, camera => camera.deviceId == _current);
-      _index = _index >= _cameras.length - 1 ? 0 : _index + 1;
-      FN.scan(_cameras[_index].deviceId);
+      var _index = _.findIndex(ರ‿ರ.cameras, camera => camera.deviceId == ರ‿ರ.current);
+      _index = _index >= ರ‿ರ.cameras.length - 1 ? 0 : _index + 1;
+      FN.scan(ರ‿ರ.cameras[_index].deviceId);
     }
   };
   
   FN.read = location => {
-    if (location) _location = {
-      value: location[0],
-      key: location[1]
-    };
+    _location(location);
     return FN.scan();
   };
   /* <!-- Public Functions --> */

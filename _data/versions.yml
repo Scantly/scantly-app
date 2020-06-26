@@ -1,4 +1,8 @@
 site :
+  0.1.2 :
+    name : Site v0.1.2
+    desc : Beta Version
+    numeric : 0.1.2.0
   0.1.1 :
     name : Site v0.1.1
     desc : Initial Beta Version

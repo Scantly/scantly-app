@@ -20,6 +20,10 @@ Code = (options, factory) => {
   options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Options --> */
   
+  /* <!-- Internal Variables --> */
+  var s = factory.Strings();
+  /* <!-- Internal Functions --> */
+  
   /* <!-- Internal Functions --> */
   var _qr = link => `${options.qr_url}?cht=qr&chs=${options.qr_size}x${options.qr_size}&choe=${options.qr_encoding}&chld=${options.qr_tolerance}|${options.qr_margin}&chl=${encodeURIComponent(link)}`;
   
@@ -74,9 +78,9 @@ Code = (options, factory) => {
     
     if (!locations || !locations.locations) return;
     var _cards = _.map(locations.locations, 
-      (location, i) => _card(i, location.location, `LOC|${location.value}|${location.key}`, 
-                             `Valid until ${location.until}`, _link(true, "reader", `${location.value}.${location.key}`),
-                             "verified_user", "Verified Reader Location"));
+      (location, i) => _card(i, location.location, `LOC|${s.base64.encode(location.value)}|${location.key}`, 
+           `Valid until ${location.until}`, _link(true, "reader", `${s.base64.encode(location.value)}.${location.key}`),
+           "verified_user", "Verified Reader Location"));
     
     /* <!-- Output Cards --> */
     var _output = factory.Display.template.show({

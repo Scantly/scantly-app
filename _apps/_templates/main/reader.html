@@ -1,8 +1,11 @@
 {% raw %}
-<div id="{{id}}" class="container d-flex flex-column justify-content-center mt-1 mt-xl-2">
+<div id="{{id}}" class="container d-flex flex-column justify-content-center mt-1 mt-xl-3">
+  {{> location}}
   <div id="{{id}}_canvas" class="canvas-holder notifier ml-auto mr-auto p-3">
     <canvas class="canvas"></canvas>
   </div>
   <div id="output" class="output mt-1 d-none text-light bg-primary font-weight-bold p-1 lead text-wrap text-break"></div>
+  {{> presence value="true" colour="in" icon="how_to_reg" text="Signed In"}}
+  {{> presence value="false" colour="out" icon="directions_run" text="Signed Out"}}
 </div>
 {% endraw %}

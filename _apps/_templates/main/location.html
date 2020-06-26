@@ -1,0 +1,8 @@
+{% raw %}
+<div id="{{id}}_location" class="d-{{#if location}}flex{{else}}none{{/if}} justify-content-center">
+  <h2 class="bg-location d-flex align-items-center p-1 mb-0 mt-1 rounded-lg border border-dark">
+    <span class="validity material-icons text-{{#if location}}{{#if location.valid}}success{{else}}danger{{/if}}{{else}}faded{{/if}} mr-1">location_city</span>
+    <span class="name text-light font-weight-light">{{#if location}}{{location.value}}{{/if}}</span>
+  </h2>
+</div>
+{% endraw %}

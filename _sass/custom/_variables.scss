@@ -24,11 +24,11 @@ $colour-delete-fill:          #e60000;
 $colour-commit-fill:          #5c5cd6;
 $colour-header:               transparentize($colour-background, 0.4);
 $colour-background-menu:      #fafafa;
+$colour-location:             #424a73;
+$colour-out:                  #ff00e6;
+$colour-in:                   #fffd00;
+
 
 /* == Sizes == */
 $navigator-line:              1.1rem;
 $busy:                        0.9rem;
-
-/* == Backgrounds == */
-
-$static-background:           url(/backgrounds/denys-nevozhai-izC9Yob6DGM-unsplash.jpg);

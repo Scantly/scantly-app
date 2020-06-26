@@ -161,7 +161,7 @@ App = function() {
             matches: /READER/i,
             length: {
               min: 0,
-              max: 1
+              max: 2
             },
             requires: ["jsqr", "fetchjsonp"],
             keys: ["ctrl+alt+r", "ctrl+alt+R", "ctrl+alt+g", "ctrl+alt+G"],
