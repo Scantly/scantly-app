@@ -46,6 +46,7 @@ Code = (options, factory) => {
   
   /* <!-- Public Functions --> */
   FN.cards = endpoints => {
+    
     if (!endpoints || !endpoints.endpoints) return;
     var _cards;
     
@@ -58,7 +59,8 @@ Code = (options, factory) => {
       
       /* <!-- Show Cards --> */
       _cards = _.map(endpoints.endpoints, 
-        (endpoint, i) => _card(i, endpoint.name, `USR|${endpoint.id}|${endpoints.user}|${endpoints.key}`));
+        (endpoint, i) => _card(i, endpoint.name, `USR|${endpoint.id}|${endpoint.user}|${endpoint.key}`,
+                              endpoint.until ? `Valid until ${endpoint.until}`: ""));
     
     }
     

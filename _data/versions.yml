@@ -1,8 +1,16 @@
 site :
+  0.1.3 :
+    name : Site v0.1.3
+    desc : Beta Version
+    numeric : 0.1.3.0
+    type:
+      - beta
   0.1.2 :
     name : Site v0.1.2
     desc : Beta Version
     numeric : 0.1.2.0
+    type:
+      - beta
   0.1.1 :
     name : Site v0.1.1
     desc : Initial Beta Version

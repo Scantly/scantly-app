@@ -47,6 +47,8 @@ imports:
     load: lazy
   - name: clipboard
     load: lazy
+  - name: filesaver
+    load: lazy
 helpers:
   - network
   - strings

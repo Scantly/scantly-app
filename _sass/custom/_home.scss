@@ -52,6 +52,10 @@ h1, h2, h3, h4, h5, h6 {text-align: center;}
 .content {
 	width: 100%;
 }
+
+.bg-page {
+  background-color: transparentize($light, 0.1) !important
+}
 // -- Content Area -- //
 
 .features, .titles {

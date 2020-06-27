@@ -1,5 +1,5 @@
 {% raw %}
-<div id="{{id}}_QR" class="card border-success mb-4 mb-lg-3" style="z-index: 1050;{{#if widths}} min-width: {{widths.min}}px; max-width: {{widths.max}}px;{{/if}}">
+<div id="{{id}}_QR" class="card border-success mb-4 mb-lg-3" style="z-index: 4;{{#if widths}} min-width: {{widths.min}}px; max-width: {{widths.max}}px;{{/if}}">
   <div class="text-center p-0">
     <div class="card-header border-success text-primary font-weight-bold">
       <div class="d-flex flex-row justify-content-{{#if icon}}between{{else}}around{{/if}}">
@@ -16,13 +16,13 @@
                          class="link" data-clipboard-text="{{link}}">
           <span class="material-icons">link</span>
         </a>{{~/if~}}
-        {{~#unless link~}}<a href="#">
+        {{~#unless link~}}<a href="#" onclick="event.preventDefault(); saveAs('{{{qr}}}', '{{name}}{{#if notes}} - {{notes}}{{/if}}.png');">
           <span class="material-icons">file_download</span>
         </a>{{~/unless~}}
         {{~#if notes~}}<span>{{notes}}</span>{{~/if~}}
-        {{~#unless link~}}<a href="#">
+        <a data-toggle="collapse" href="#{{id}}_QR_FULL" data-toggle="tooltip" title="Click for printable version">
           <span class="material-icons">print</span>
-        </a>{{~/unless~}}
+        </a>
       </div>
     </div>
   </div>

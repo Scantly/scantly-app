@@ -44,7 +44,7 @@ Reader = (options, factory) => {
         }));
   
   var _location = location => {
-    if (location && location.length == 2) {
+    if (location && location.length === 2) {
       ರ‿ರ.location = {
         raw: s.base64.decode(location[0]),
         key: location[1]

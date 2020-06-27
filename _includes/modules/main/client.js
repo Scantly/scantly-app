@@ -21,7 +21,7 @@ Client = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
-  FN.log = (endpoint, user, key, location_value, location_key) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&k=${key}&l_v=${s.base64.encode(location_value || "")}&l_k=${location_key || ""}`)
+  FN.log = (endpoint, user, user_key, location_value, location_key) => fetchJsonp(`${options.url(endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&l=${s.base64.encode(location_value || "")}&l_k=${location_key || ""}`)
     .then(response => response.json())
     .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
   

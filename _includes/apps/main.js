@@ -124,6 +124,7 @@ App = function() {
             matches: /CODES/i,
             state: "authenticated",
             length: 0,
+            requires: ["filesaver"],
             keys: ["ctrl+alt+a", "ctrl+alt+A"],
             fn: () => FN.view.codes().then(FN.state(FN.states.views, FN.states.codes.in, "Codes"))
           },

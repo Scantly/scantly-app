@@ -76,7 +76,13 @@ css:
     
 		{% include nav.html type="sticky-top" %}
     
-		<div id="{{ site.app.content }}" class="{{ site.app.content }}">{{ content }}</div>
+    <p class="titles display-4 bg-light ml-3 ml-xl-4 px-2 py-1 rounded">{{ page.title }}</p>
+    
+		<div id="{{ site.app.content }}" class="container">
+      <div class="{{ site.app.content }} bg-page p-2">
+        {{ content }}
+      </div>
+    </div>
 		
     {% include copyright.html %}
     
