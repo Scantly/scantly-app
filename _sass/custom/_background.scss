@@ -32,14 +32,14 @@ tomas-robertson-Oa_MYSeDxuM-unsplash, yao-hu-kPxL9EApN6U-unsplash);
 @for $i from 1 through length($backgrounds) {
   $background: nth($backgrounds, $i);
   .background-#{$i} {
-    background: url("/backgrounds/#{$background}.jpg") no-repeat center center fixed, $black; 
+    background: url("/backgrounds/#{$background}.jpg") no-repeat center center fixed, $black;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
   }
   .webp-background-#{$i} {
-    background: url("/backgrounds/#{$background}.webp") no-repeat center center fixed, $black; 
+    background: url("/backgrounds/#{$background}.webp") no-repeat center center fixed, $black;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

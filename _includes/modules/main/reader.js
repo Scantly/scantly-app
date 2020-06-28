@@ -120,6 +120,14 @@ Reader = (options, factory) => {
           } else if (_data[0] == "LOC" && _data.length === 3) {
             var _result = _location(_data.splice(1, 2));
             _highlightReader(_result && _result.valid === true ? "bg-success" : "bg-danger");
+          } else if (_data[0] == "DEMO" && _data.length === 3) {
+            var _user = s.base64.decode(_data[1]);
+            if (_user) {
+              _highlightReader("bg-success");
+              ರ‿ರ.demos = ರ‿ರ.demos ? ರ‿ರ.demos : {};
+              ರ‿ರ.demos[_user] = (ರ‿ರ.demos[_user] === undefined ? true : !ರ‿ರ.demos[_user]);
+              _showPresence(ರ‿ರ.demos[_user]);
+            }
           }
         }
       }

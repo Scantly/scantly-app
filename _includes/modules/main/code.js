@@ -47,13 +47,15 @@ Code = (options, factory) => {
   /* <!-- Public Functions --> */
   FN.cards = endpoints => {
     
-    if (!endpoints || !endpoints.endpoints) return;
+    if (!endpoints || !endpoints.endpoints) return null;
     var _cards;
     
-    if (endpoints.length === 0) {
+    if (endpoints.endpoints.length === 0) {
       
       /* <!-- Demo Mode --> */
-      _cards = [];
+      _cards = [
+        _card(0, "DEMO", `DEMO|${s.base64.encode(endpoints.user)}|${endpoints.user}`, "Demo Sign-In Card"),
+      ];
     
     } else {
       
@@ -78,7 +80,7 @@ Code = (options, factory) => {
   
   FN.locations = locations => {
     
-    if (!locations || !locations.locations) return;
+    if (!locations || !locations.locations) return null;
     var _cards = _.map(locations.locations, 
       (location, i) => _card(i, location.location, `LOC|${s.base64.encode(location.value)}|${location.key}`, 
            `Valid until ${location.until}`, _link(true, "reader", `${s.base64.encode(location.value)}.${location.key}`),
