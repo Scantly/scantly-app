@@ -1,14 +1,9 @@
-### Privacy
-{:.anchor mb-2}
-
-As well as an unswerving commitment to __transparency__, we are determined to protect the __privacy__, __security__ and __confidentiality__ of your data.
-{:.alert .alert-primary}
-
-We therefore __do not__ store, process or analyse any of your __Google user data__. Your data stays in your Google account and on your device only, our servers and people never see it, and we never touch it. This data is __yours__, and that is the way it should always be!
-{:.alert .alert-dark}
-
 #### Data Protection, US COPPA and the EU GDPR
 {:.mt-2}
+
+We have designed our systems with privacy at their code. All your user data is handled and stored in _your_ own __Google Sheet__, and processed via _your_ own __Google Apps Script__.
+
+By architected the system in this way, your data remains entirely under your control - which helps you ensure compliancy with relevant legislation and means you __shouldn't need__ to undertake a detailed [DPIA](https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/accountability-and-governance/data-protection-impact-assessments/){:target="_blank" rel="noopener"} (Data Protection Impact Assessment).
 
 #### Analytics
 {:.mt-2}

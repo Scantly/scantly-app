@@ -11,7 +11,7 @@ Code = (options, factory) => {
     qr_url: "https://chart.googleapis.com/chart",
     qr_encoding: "ISO-8859-1",
     qr_size: 540,
-    qr_tolerance: "Q", /* <!-- L = up to 7% data loss | M 15% | Q 25% | H 30%--> */
+    qr_tolerance: "M", /* <!-- L = up to 7% data loss | M 15% | Q 25% | H 30%--> */
     qr_margin: 6,
   }, FN = {};
   /* <!-- Internal Constants --> */

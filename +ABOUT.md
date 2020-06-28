@@ -4,27 +4,14 @@ permalink: /about
 title: About
 simple: true
 ---
-{% include_relative INTRO.md %}
+{% include section.html content="INTRO" class="m-2" %}
 
-__Details__{:.font-smaller-40 .bg-light .py-1 .px-2 .border}
-{:.display-4 .line-height-smaller-60 .m-1}
+{% include section.html content="README" title="Details" class="m-2" %}
 
-{% include_relative README.md %}
+{% include section.html content="TERMS" title="Terms" class="m-2" %}
 
-__Terms of Service__{:.font-smaller-40 .bg-light .py-1 .px-2 .border}
-{:.display-4 .line-height-smaller-60 .m-1}
+{% include section.html content="VERSIONS" title="Version History" class="m-2" %}
 
-{% include_relative TERMS.md %}
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f6bce51f88d44ecd9ebfe115d037f975)](https://www.codacy.com)
 
-__Version History & Changes__{:.font-smaller-40 .bg-light .py-1 .px-2 .border}
-{:.display-4 .line-height-smaller-60 .m-1}
-
-{::options parse_block_html="true" /}
-{% for version in site.data.versions.site limit:5 %}
-+ **{{ version[0] }}**{% if version[1].type contains "security" %}<span class="badge badge-danger ml-2">Security Fix</span>{% endif %}{% if version[1].type contains "major" %}<span class="badge badge-dark ml-2">Major Release</span>{% endif %}{% if version[1].type contains "beta" %}<span title="Beta Release" class="badge badge-warning ml-2">BETA</span>{% endif %}{% if version[1].type contains "production" %}<span title="Production Release" class="badge badge-success ml-2">PRODUCTION</span>{% endif %}{% if version == include.versions.first %}<span class="badge badge-secondary ml-2">Latest</span>{% endif %}
-  - <p class="m-0">__{{ version[1].name }}__</p>{% if version[1].desc %}
-  - <p class="m-0">{% capture desc %}_{{ version[1].desc }}_{% endcapture %}{{ desc | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</p>{% endif %}
-  {% if version[1].changes %}{% for change in version[1].changes %}
-    * <p class="m-0{% if forloop.last %} pb-2{% endif %}">{% capture details %}{% if change.details %}{{ change.details }}{% else %}{{ change }}{% endif %}{% if change.url %} (See [here]({{ change.url }}){:target="_blank"} for details){% endif %}{% endcapture %}{{ details | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</p>
-  {% endfor %}{% endif %}
-{% endfor %}
+[![Netlify Status](https://api.netlify.com/api/v1/badges/396f185c-343a-49a3-88bc-4dedf824e30c/deploy-status)](https://app.netlify.com/sites/scantly/deploys)

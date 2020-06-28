@@ -1,0 +1,13 @@
+organisation:
+  name: Organisation
+  condition: "Paid yearly : £52 per year"
+  desc:
+    - __All__ users in a domain
+    - __Extra__ users as required
+    - __Unlimited__ Technical Support
+    - __Priority__ Feature Requests
+  cost: 1
+  unit: week
+  data: Organisation Email Domain
+  details: Please supply the domain name for your organisation. This is the part of your email address after the @ symbol.
+  button: 

@@ -1,6 +1,6 @@
 # Global
 safe:									true
-exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock, __tests__]
+exclude:							[TODO.md, REPOSITORY.md, CNAME, Gemfile, Gemfile.lock, __tests__, INTRO.md, LICENSE.md, PRIVACY.md, README.md, TERMS.md, VERSIONS.md, TRANSPARENCY.md, _pages/_content/*, _apps/_content/*]
 include:							[_pages, _apps, _others, _extras, _scripts]
 timezone:							Europe/London
 

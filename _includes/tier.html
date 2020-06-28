@@ -1,0 +1,13 @@
+<div class="card text-center">
+  <div class="card-header">
+    <h5 class="display-2 mt-0">{% if include.tier.cost &gt; 0%}<span class="currency text-muted">£</span><span class="price">{{include.tier.cost}}</span><span class="period"> / {% if include.tier.unit %}{{include.tier.unit}}{% else %}month{% endif %}</span>{% endif %}</h5>
+  </div>
+  <div class="card-block px-xl-2">
+    <h5 class="card-title align-middle">{{include.tier.name}}</h5>
+    {%- if include.tier.condition -%}<h6 class="text-primary">{{ include.tier.condition | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</h6>{%- endif -%}
+    <ul class="list-group mx-4">
+      {% for desc in include.tier.desc %}<li class="list-group-item">{{ desc | markdownify | replace: '<p>', '' | replace: '</p>', '' | strip }}</li>{% endfor %}
+    </ul>
+    {%- if include.tier.button -%}<a href="#" class="btn btn-gradient mt-2" data-tier="{{include.tier.name}}" data-tier-button="{{include.tier.button}}" data-tier-data="{{include.tier.data}}" data-tier-details="{{include.tier.details}}">Subscribe Now</a>{%- endif -%}
+  </div>
+</div>

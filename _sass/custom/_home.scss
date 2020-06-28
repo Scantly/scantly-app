@@ -25,8 +25,6 @@ body {
 p {margin: 0.5em 0.5em;}
 
 a {text-decoration: none; color: inherit;}
-
-h1, h2, h3, h4, h5, h6 {text-align: center;}
 // -- Regular Elements -- //
 
 // -- Scrollbars -- //
@@ -54,10 +52,16 @@ h1, h2, h3, h4, h5, h6 {text-align: center;}
 }
 
 .bg-page {
-  background-color: transparentize($light, 0.1) !important
+  background-color: transparentize($light, 0.1) !important;
 }
 // -- Content Area -- //
 
 .features, .titles {
   width: fit-content;
+}
+
+.titles, .copyright {
+  border-left-color: $colour-highlight;
+  border-left-width: thick;
+  border-left-style: solid;
 }

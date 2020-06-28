@@ -10,7 +10,9 @@ $font-line-spacing:           1.4;
 
 /* == Colours == */
 $colour-background: 					#ffffff;
+$colour-general:              #000000;
 $colour-emphasis: 						#cccccc;
+$colour-deemphasise:          #f3f3f3;
 $colour-foreground: 					darken($colour-emphasis, 10%);
 $colour-highlight:            #27a532;
 $colour-header:               transparentize($colour-background, 0.4);
@@ -18,3 +20,5 @@ $colour-background-menu:      #fafafa;
 $colour-location:             #424a73;
 $colour-out:                  #ff00e6;
 $colour-in:                   #fffd00;
+$colour-section:              #fafafa;
+$colour-support:              #28a745;
