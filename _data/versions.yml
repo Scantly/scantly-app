@@ -1,8 +1,8 @@
 site :
-  0.1.7 :
-    name : Site v0.1.7
+  0.1.8 :
+    name : Site v0.1.8
     desc : Beta Version
-    numeric : 0.1.7.0
+    numeric : 0.1.8.0
     type:
       - beta
     changes :
