@@ -13,13 +13,18 @@ Reader = (options, factory) => {
       worker: window.Worker ? true : false,
       holdoff: 5000,
       highlight: 3000,
+      mode: -1, /* <!-- -1 = User Facing, 1 = Rear Camera --> */
     },
     FN = {},
     SYNC = {
       throttle: 150,
+      sample: 3,
+      current: 0,
     },
     WORKER = {
-      throttle: 50,
+      throttle: 100,
+      sample: 4,
+      current: 0,
       worker : window.Worker ? new Worker("/workers/qr-decode.js") : {},
       ready : true,
     };
@@ -95,8 +100,10 @@ Reader = (options, factory) => {
   var _showPresence = value => _decay(ರ‿ರ.display.find(`.presence-${value}`), "show");
   
   var _code = (code, restart, prefix) => {
-    _drawBox(code.location, code.data ? options.success : options.failure);
     if (code.data) {
+      _drawBox(code.location, code.data ? options.success : options.failure);
+      ರ‿ರ.video.classList.add("d-none");
+      ರ‿ರ.element.classList.remove("d-none");
       if (!ರ‿ರ.last || ರ‿ರ.last.code.data != code.data || Date.now() - ರ‿ರ.last.when > options.holdoff) {
         ರ‿ರ.last = {
           when : Date.now(),
@@ -134,6 +141,8 @@ Reader = (options, factory) => {
       
       _.delay(() => {
           if (factory.Flags.debug()) ರ‿ರ.output.addClass("d-none");
+          ರ‿ರ.element.classList.add("d-none");
+          ರ‿ರ.video.classList.remove("d-none");
           restart();
         }, options.highlight);
       
@@ -141,12 +150,12 @@ Reader = (options, factory) => {
     }
   };
   
-  var _refresh = () => {
+  var _refresh = sample => {
     if (ರ‿ರ.video.readyState === ರ‿ರ.video.HAVE_ENOUGH_DATA) {
       ರ‿ರ.element.height = ರ‿ರ.video.videoHeight;
       ರ‿ರ.element.width = ರ‿ರ.video.videoWidth;
       ರ‿ರ.canvas.drawImage(ರ‿ರ.video, 0, 0, ರ‿ರ.element.width, ರ‿ರ.element.height);
-      return ರ‿ರ.canvas.getImageData(0, 0, ರ‿ರ.element.width, ರ‿ರ.element.height);
+      return sample ? ರ‿ರ.canvas.getImageData(0, 0, ರ‿ರ.element.width, ರ‿ರ.element.height) : false;
     }
   };
   
@@ -160,7 +169,7 @@ Reader = (options, factory) => {
   SYNC.run = _.throttle(fn => _.defer(() => requestAnimationFrame(fn)), SYNC.throttle);
 
   SYNC.scan = () => {
-    var _handled, _image = _refresh();
+    var _handled, _image = _refresh(++SYNC.current === SYNC.sample ? (SYNC.current = 0, true) : null);
     if (_image) {
       var code = jsQR(_image.data, _image.width, _image.height, {
         inversionAttempts: "dontInvert",
@@ -175,7 +184,7 @@ Reader = (options, factory) => {
   WORKER.run = _.throttle(fn => _.defer(() => requestAnimationFrame(fn)), WORKER.throttle);
   
   WORKER.scan = () => {
-    var _image = _refresh();
+    var _image = _refresh(++WORKER.current === WORKER.sample ? (WORKER.current = 0, true) : null);
     if (_image && WORKER.ready) {
       WORKER.ready = false;
       WORKER.worker.postMessage(_image, [_image.data.buffer]);
@@ -195,8 +204,9 @@ Reader = (options, factory) => {
   /* <!-- Public Functions --> */
   FN.scan = id => _render().then(reader => {
       ರ‿ರ.element = reader.find("canvas")[0];
-      ರ‿ರ.canvas = ರ‿ರ.element.getContext("2d");
-      ರ‿ರ.video = document.createElement("video");
+      ರ‿ರ.canvas = ರ‿ರ.element.getContext("2d", { alpha: false });
+      ರ‿ರ.canvas.imageSmoothingEnabled = false;
+      ರ‿ರ.video = reader.find("video")[0];
       ರ‿ರ.output = reader.find(".output");
       return reader;
     }).then(reader => navigator.mediaDevices.getUserMedia({
@@ -210,6 +220,9 @@ Reader = (options, factory) => {
       ರ‿ರ.current = stream.getVideoTracks()[0].getSettings().deviceId;
       ರ‿ರ.video.srcObject = stream;
       ರ‿ರ.video.setAttribute("playsinline", true);
+      ರ‿ರ.video.setAttribute("muted", true);
+      ರ‿ರ.video.style.transform = `scaleX(${options.mode})`;
+      ರ‿ರ.element.style.transform = `scaleX(${options.mode})`;
       ರ‿ರ.video.play();
       options.worker ? WORKER.run(WORKER.scan) : SYNC.run(SYNC.scan);
       if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) navigator.mediaDevices.enumerateDevices()

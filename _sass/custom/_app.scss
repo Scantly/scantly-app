@@ -134,13 +134,12 @@
 // -- Action Menu -- //
 
 // -- Reader -- //
-.canvas {
-  transform: scaleX(-1);
+.canvas, .video {
   @media screen and (orientation:portrait) {
-    height: 60vh;
+    width: 80vw;
   }
   @media screen and (orientation:landscape) {
-    width: 50vw; 
+    width: 50vw;
   }
 }
 

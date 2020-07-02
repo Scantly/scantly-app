@@ -1,10 +1,13 @@
 site :
-  0.1.6 :
-    name : Site v0.1.6
+  0.1.7 :
+    name : Site v0.1.7
     desc : Beta Version
-    numeric : 0.1.6.0
+    numeric : 0.1.7.0
     type:
       - beta
+    changes :
+      - Improved Video Feed Responsiveness on all devices
+      - Reduced CPU load by sampling for QR codes in background worker
   0.1.4 :
     name : Site v0.1.4
     desc : Beta Version
