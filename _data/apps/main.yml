@@ -49,6 +49,8 @@ imports:
     load: lazy
   - name: filesaver
     load: lazy
+  - name: ion-sound
+    load: lazy
 helpers:
   - network
   - strings

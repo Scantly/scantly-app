@@ -40,6 +40,7 @@ globals:
   saveAs: false
   importScripts: false
   jsQR: false
+  ion: false
   moment: false
   quotedPrintable: false
   objectHash: false

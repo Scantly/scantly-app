@@ -40,6 +40,26 @@ Reader = (options, factory) => {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
+  var _setupAudio = () => {
+    if (window.ion) ion.sound({
+      sounds: [
+          {
+              name: "location_set"
+          },
+          {
+              name: "presence_true"
+          },
+          {
+              name: "presence_false"
+          }
+      ],
+      volume: 0.4,
+      path: "/sounds/",
+      preload: true
+    });
+    return true;
+  };
+  
   var _render = () => Promise.resolve(ರ‿ರ.display = factory.Display.template.show({
           template: "reader",
           id: options.id,
@@ -48,7 +68,7 @@ Reader = (options, factory) => {
           clear: true,
         }));
   
-  var _location = location => {
+  var _location = (location, notify) => {
     if (location && location.length === 2) {
       ರ‿ರ.location = {
         raw: s.base64.decode(location[0]),
@@ -58,6 +78,7 @@ Reader = (options, factory) => {
       ರ‿ರ.location.valid = new Date().toISOString().split("T")[0] <= ರ‿ರ.location.parsed[2] ? true : false;
       ರ‿ರ.location.value = ರ‿ರ.location.parsed[1];
       factory.Flags.log("READER LOCATION SET:", ರ‿ರ.location);
+      if (notify && window.ion && ರ‿ರ.sound !== false) _.defer(() => ion.sound.play("location_set"));
     } else {
       delete ರ‿ರ.location;
     }
@@ -97,7 +118,36 @@ Reader = (options, factory) => {
   
   var _highlightReader = value => _decay($(ರ‿ರ.element.parentElement), value);
   
-  var _showPresence = value => _decay(ರ‿ರ.display.find(`.presence-${value}`), "show");
+  var _showPresence = value => {
+    _decay(ರ‿ರ.display.find(`.presence-${value}`), "show");
+    if (window.ion && ರ‿ರ.sound !== false) 
+      value === true ? 
+        _.defer(() => ion.sound.play("presence_true")) : value === false ? 
+        _.defer(() => ion.sound.play("presence_false")) : null;
+  };
+  
+  var _sounds = () => {
+    var _action = factory.Display.template.show({
+              template: "actions",
+              id: `${options.id}_sound`,
+              left: true,
+              colour: "success",
+              icon: "volume_up",
+              target: factory.container,
+            });
+    _action.find(".btn").on("click.sound", e => {
+      e.preventDefault();
+      ರ‿ರ.sound = ರ‿ರ.sound === undefined ? false : !ರ‿ರ.sound;
+      var _btn = $(e.currentTarget || e.target), _icon = _btn.children("i");
+      if (ರ‿ರ.sound) {
+        _btn.removeClass("btn-danger").addClass("btn-success");
+        _icon.text("volume_up");
+      } else {
+        _btn.removeClass("btn-success").addClass("btn-danger");
+        _icon.text("volume_off");
+      }
+    });
+  };
   
   var _code = (code, restart, prefix) => {
     if (code.data) {
@@ -125,7 +175,7 @@ Reader = (options, factory) => {
                 }
               });
           } else if (_data[0] == "LOC" && _data.length === 3) {
-            var _result = _location(_data.splice(1, 2));
+            var _result = _location(_data.splice(1, 2), true);
             _highlightReader(_result && _result.valid === true ? "bg-success" : "bg-danger");
           } else if (_data[0] == "DEMO" && _data.length === 3) {
             var _user = s.base64.decode(_data[1]);
@@ -208,6 +258,7 @@ Reader = (options, factory) => {
       ರ‿ರ.canvas.imageSmoothingEnabled = false;
       ರ‿ರ.video = reader.find("video")[0];
       ರ‿ರ.output = reader.find(".output");
+      ರ‿ರ.audio = ರ‿ರ.audio || _setupAudio();
       return reader;
     }).then(reader => navigator.mediaDevices.getUserMedia({
       video: id ? {
@@ -225,6 +276,7 @@ Reader = (options, factory) => {
       ರ‿ರ.element.style.transform = `scaleX(${options.mode})`;
       ರ‿ರ.video.play();
       options.worker ? WORKER.run(WORKER.scan) : SYNC.run(SYNC.scan);
+      if (window.ion) _sounds();
       if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) navigator.mediaDevices.enumerateDevices()
         .then(devices => _.filter(devices, device => device.kind == "videoinput"))
         .then(cameras => {
@@ -232,6 +284,7 @@ Reader = (options, factory) => {
           if (cameras.length > 1) factory.Display.template.show({
               template: "actions",
               id: `${options.id}_actions`,
+              right: true,
               action: "swap.camera",
               icon: "flip_camera_ios",
               target: factory.container,
@@ -253,9 +306,7 @@ Reader = (options, factory) => {
     return FN.scan();
   };
   /* <!-- Public Functions --> */
-
-  /* <!-- Initial Calls --> */
-
+  
   /* <!-- External Visibility --> */
   return FN;
   /* <!-- External Visibility --> */

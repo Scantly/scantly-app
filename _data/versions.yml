@@ -1,4 +1,12 @@
 site :
+  0.1.9 :
+    name : Site v0.1.9
+    desc : Beta Version
+    numeric : 0.1.9.0
+    type:
+      - beta
+    changes :
+      - Audio Confirmation for Sign-in / Sign-out
   0.1.8 :
     name : Site v0.1.8
     desc : Beta Version

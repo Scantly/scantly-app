@@ -164,7 +164,7 @@ App = function() {
               min: 0,
               max: 2
             },
-            requires: ["jsqr", "fetchjsonp"],
+            requires: ["jsqr", "fetchjsonp", "ion-sound"],
             keys: ["ctrl+alt+r", "ctrl+alt+R", "ctrl+alt+g", "ctrl+alt+G"],
             fn: command => FN.view.reader(command).then(FN.state(FN.states.views, FN.states.reader.in, "Reader"))
           },

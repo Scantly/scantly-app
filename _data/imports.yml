@@ -2086,3 +2086,24 @@ qrscanner:
         - replace: QrScanner.WORKER_PATH = 'qr-scanner-worker.min.js';
           with: QrScanner.WORKER_PATH = 'https://cdn.jsdelivr.net/npm/qr-scanner@1.1.1/qr-scanner-worker.min.js';
       id: __qrscanner
+
+ion-sound:
+  name: ION Sound
+  desc: JavaScript plugin for playing sounds and music in web
+  url: https://cdnjs.com/libraries/ion-sound
+  project: https://github.com/IonDen/ion.sound
+  version: 3.0.7
+  license: MIT
+  type: js
+  prod:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/js/ion.sound.min.js
+      integrity: sha512-k0RyhyJoNdQfdrx7Yb5+zbrtFp8CVsGMJPlQkcNsNZi82GS0R09TG1F/Ar1LuUSXrkVMuk7SftnrXK35nAfdYg==
+      crossorigin: anonymous
+      bulk: 13.4
+      id: __ionsound
+  dev:
+    - url: https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/js/ion.sound.js
+      integrity: sha512-AfbeL/zgYsRxWTRRLEVHanxsjsv2288WJxqxIulPmqdL2BXBbePerjJeNy3LkBIZ1/F7DgyhtQ9zm/6fF2TTAA==
+      crossorigin: anonymous
+      bulk: 28.7
+      id: __ionsound
