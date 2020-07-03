@@ -142,9 +142,11 @@
 .canvas, .video {
   @media screen and (orientation:portrait) {
     width: 80vw;
+    max-height: 80vh;
   }
   @media screen and (orientation:landscape) {
-    width: 50vw;
+    width: 60vw;
+    max-height: 70vh;
   }
 }
 

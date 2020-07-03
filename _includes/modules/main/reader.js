@@ -262,7 +262,9 @@ Reader = (options, factory) => {
       return reader;
     }).then(reader => navigator.mediaDevices.getUserMedia({
       video: id ? {
-        deviceId: id
+        deviceId: {
+          exact : id
+        }
       } : {
         facingMode: "user"
       }

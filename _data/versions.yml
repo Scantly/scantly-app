@@ -1,11 +1,12 @@
 site :
-  0.1.9 :
-    name : Site v0.1.9
+  0.2.0 :
+    name : Site v0.2.0
     desc : Beta Version
-    numeric : 0.1.9.0
+    numeric : 0.2.0.0
     type:
       - beta
     changes :
+      - Bug-Fix for Front/Back Camera swap on IOS Devices
       - Audio Confirmation for Sign-in / Sign-out
   0.1.8 :
     name : Site v0.1.8
