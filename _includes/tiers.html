@@ -1,0 +1,8 @@
+<div class="container tiers{% if include.class %} {{ include.class }}{% endif %}">
+  <div class="row flex-items-xs-middle flex-items-xs-center">
+		{%- for value in site.data.tiers -%}
+      {%- assign tier = value[1] -%}
+      {%- include tier.html tier=tier -%}
+    {%- endfor -%}
+  </div>
+</div>

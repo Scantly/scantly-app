@@ -2,24 +2,72 @@
 layout: page
 permalink: /pricing
 title: Pricing
-simple: true
+modules:
+  - generic/controller
+  - generic/service
+  - generic/flags
+  - generic/display
+  - page
+  - pricing
+  - pricing/subscribe
+helpers:
+  - strings
+  - handlebars
+  - backgrounds
+scripts: 
+  - extends/math
+imports:
+  - name: underscore
+    load: first
+  - name: jquery_slim
+    load: first
+  - name: popper
+    load: first
+  - name: bootstrap-js
+    load: last
+  - name: urlparser
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: handlebars
+    load: last
+  - name: stripe
+    load: last
+templates:
+    - pricing/subscribe
+docs:
+    - pricing/SUBSCRIBE
 extra-css:
   primary:
     - custom/pricing
   secondary:
     - bootstrap/list-group
+    - bootstrap/input-group
+    - bootstrap/forms
+nav: true
 ---
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12 col-md-6 col-xl-4">
-      <div class="container tiers m-2 m-lg-3 m-xl-4">
-        <div class="row justify-content-around">
-          {% include tier.html tier=site.data.tiers.organisation %}
-        </div>
+<div class="container-fluid my-3">
+  <div class="row no-gutters">
+    <div class="col-12 col-lg-8 col-xl-7">
+      <div class="card-deck tiers">
+        {%- for value in site.data.tiers -%}
+          {%- assign id = value[0] -%}
+          {%- assign tier = value[1] -%}
+          {%- include tier.html id=id tier=tier class="border border-dark" -%}
+        {%- endfor -%}
       </div>
     </div>
-    <div class="col-12 col-md-6 col-xl-8">
-      {% include section.html content="_content/SUBSCRIPTION" title="Subscription Details" class="mx-3 my-2" %}
+    <div class="col-12 col-lg-4 col-xl-5">
+      {% include section.html content="_content/SUBSCRIPTION" class="pl-lg-3" %}
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-12">
+      {% include section.html content="_content/CANCELLATION" %}
+      {% include section.html content="_content/HARDSHIP" title="Hardship" %}
     </div>
   </div>
 </div>

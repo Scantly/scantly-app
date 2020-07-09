@@ -33,13 +33,20 @@ Main = function() {
 		
 		start : function() {
 			
-						/* <!-- Get Global Flags --> */
+      /* <!-- Get Global Flags --> */
 			ಠ_ಠ.Flags.initialise().then(function(flags) {
 
 				ಠ_ಠ.Flags = flags;
         
         /* <!-- Set Random Background --> */
         ಠ_ಠ.Backgrounds().set();
+        
+        /* <!-- Helper Creations --> */
+        ["Url", "Handlebars"].forEach(h => ಠ_ಠ[h] && ಠ_ಠ._isF(ಠ_ಠ[h]) ? ಠ_ಠ[h.toLowerCase()] = ಠ_ಠ[h]({}, ಠ_ಠ) : false);
+        
+				/* <!-- Module Starts --> */
+				(ಠ_ಠ.Page ? [ಠ_ಠ.Display, ಠ_ಠ.Page] : ಠ_ಠ.Display ? [ಠ_ಠ.Display] : [])
+					.forEach((m) => {if (m && m.start) m.start();});
         
         /* <!-- Material Button Waves --> */	
         if (window.Waves) {

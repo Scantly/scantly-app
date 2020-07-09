@@ -45,6 +45,7 @@ globals:
   quotedPrintable: false
   objectHash: false
   fetchJsonp: false
+  Stripe: false
   GOOGLE_SCOPES: false
   GOOGLE_CLIENT_ID: false
   GOOGLE_KEY: false
@@ -88,3 +89,5 @@ globals:
   Client: true
   Code: true
   Backgrounds: true
+  Page: true
+  Subscribe: true

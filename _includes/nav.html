@@ -3,25 +3,24 @@
   <a class="navbar-brand mr-0 mr-md-3" href="/" aria-label="Scantly">
     <h2 class="d-inline-block m-0 text-uppercase brand"><span class="text-body">Scan</span><span class="text-light bg-highlight px-1 px-xl-2">tly</span></h2>
   </a>
-
-  {% if page.app and page.layout == "app" %}<div class="navbar-nav-scroll">
+  {% if page.nav or (page.app and page.layout == "app") %}<div class="navbar-nav-scroll">
     <ul class="navbar-nav bd-navbar-nav flex-row">
       <li class="nav-item">
-        <a class="nav-link" href="#overview">Home</a>
+        <a class="nav-link" href="{% if page.nav %}/{% endif %}#overview">Home</a>
       </li>
-      <li class="nav-item">
+      {% unless page.nav %}<li class="nav-item">
         <a class="nav-link disabled state-authenticated" href="#codes">Codes</a>
-      </li>
+      </li>{% endunless %}
       <li class="nav-item">
-        <a class="nav-link" href="#reader">Reader</a>
+        <a class="nav-link" href="{% if page.nav %}/{% endif %}#reader">Reader</a>
       </li>
-      <li class="nav-item">
+      {% unless page.nav %}<li class="nav-item">
         <a class="nav-link disabled state-authenticated" href="#manage">Manage</a>
-      </li>
+      </li>{% endunless %}
     </ul>
   </div>
 
-  <div class="hide-reader ml-md-auto">
+  {% unless page.nav %}<div class="hide-reader ml-md-auto">
     
     <ul class="navbar-nav flex-row d-none d-md-flex">
     
@@ -58,7 +57,7 @@
 
       </form>
 
-    </div>
+    </div>{% endunless %}
     
   </div>{% endif %}
     

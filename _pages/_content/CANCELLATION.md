@@ -1,0 +1,1 @@
+If you choose to cancel your subscription, you will __retain__ all of your sign-in/out data (as this data is solely owned and controlled by you).

@@ -1,12 +1,12 @@
 // -- Support / Pricing Page -- //
 .tiers {
 	.card {
+    min-width: 16rem;
 		border: 0;
 		border-radius: 0px;
 		-webkit-box-shadow: 0 3px 0px 0 rgba(0, 0, 0, .08);
 		box-shadow: 0 3px 0px 0 rgba(0, 0, 0, .08);
 		transition: all .3s ease-in-out;
-		padding: 2.25rem 0;
 		position: relative;
 		will-change: transform; 
 		background-color: $colour-section;
@@ -22,8 +22,8 @@
 		}
 		&:hover {
 			transform: scale(1.05);
-			-webkit-box-shadow: 0 20px 35px 0 rgba(0, 0, 0, .08);
-			box-shadow: 0 20px 35px 0 rgba(0, 0, 0, .08);
+			-webkit-box-shadow: 0 20px 45px 0 rgba(0, 0, 0, 0.4);
+			box-shadow: 0 20px 45px 0 rgba(0, 0, 0, 0.4);
 			&:after {
 				width: 100%;
 			}

@@ -1,13 +1,30 @@
-organisation:
-  name: Organisation
-  condition: "Paid yearly : £52 per year"
+monthly:
+  name: Monthly
+  condition:
   desc:
-    - __All__ users in a domain
+    - __All__ users in your domain
+    - __Unlimited__ Technical Support
+  cost: 10
+  unit: month
+  data: Organisation Domain
+  details: Please supply the domain name for your organisation. This is the part of your email address after the @ symbol.
+  product:
+    live: price_1H2YBHKif2GuZt0DP1BQTGhC
+    testing: price_1H2YChKif2GuZt0Dyyz3M3ta
+
+yearly:
+  name: Yearly
+  condition: Equivalent of £8/month
+  desc:
+    - __All__ users in your domain
     - __Extra__ users as required
     - __Unlimited__ Technical Support
     - __Priority__ Feature Requests
-  cost: 1
-  unit: week
-  data: Organisation Email Domain
+  cost: 96
+  unit: year
+  colour: highlight
+  data: Organisation Domain
   details: Please supply the domain name for your organisation. This is the part of your email address after the @ symbol.
-  button: 
+  product:
+    live: price_1H2YBHKif2GuZt0DjWNgsXCV
+    testing: price_1H2YChKif2GuZt0DQLDyEnzW

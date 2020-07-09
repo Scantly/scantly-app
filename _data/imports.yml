@@ -897,6 +897,7 @@ moment:
       integrity: sha256-5oApc/wMda1ntIEK4qoWJ4YItnV4fBHMwywunj8gPqc=
       crossorigin: anonymous
       bulk: 58.9
+      map: true
       id: __moment
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.js
@@ -919,6 +920,7 @@ moment_all:
       integrity: sha256-4HOrwHz9ACPZBxAav7mYYlbeMiAL0h6+lZ36cLNpR+E=
       crossorigin: anonymous
       bulk: 356
+      map: true
       id: __moment
   dev:
     - url: https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment-with-locales.js
@@ -2107,3 +2109,19 @@ ion-sound:
       crossorigin: anonymous
       bulk: 28.7
       id: __ionsound
+      
+stripe:
+  name: Stripe Client API
+  project: https://stripe.com/docs
+  desc: The Stripe Payments Client Javascript API
+  type: js
+  prod:
+    - url: https://js.stripe.com/v3
+      mode: no-cors
+      bulk: 176
+      id: __stripe
+  dev:
+    - url: https://js.stripe.com/v3
+      mode: no-cors
+      bulk: 176
+      id: __stripe

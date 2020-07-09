@@ -38,7 +38,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-outline-secondary btn-flat waves-effect" data-dismiss="modal">{{either cancel "Close"}}</button>
-        {{#if actions}}{{#each actions}}<button{{#present id}}id="{{id}}" {{/present}}type="button" style="min-width: fit-content;" class="btn btn-outline-info waves-effect" data-action="{{concat 'actions_' @index}}" data-dismiss="modal"{{#if title}} title="{{title}}" data-toggle="tooltip"{{/if}}>{{text}}</button>{{/each}}{{/if}}
+        {{#if actions}}{{#each actions}}<button {{#present id}}id="{{id}}" {{/present}}type="button" style="min-width: fit-content;" class="btn btn-outline-info waves-effect" data-action="{{concat 'actions_' @index}}" data-dismiss="modal"{{#if title}} title="{{title}}" data-toggle="tooltip"{{/if}}>{{text}}</button>{{/each}}{{/if}}
         {{#unless (is action "===" false)}}<button type="button" class="btn btn-primary waves-effect"
         	data-dismiss="modal">{{either action "Select"}}</button>{{/unless}}
       </div>

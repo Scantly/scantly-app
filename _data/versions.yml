@@ -1,4 +1,12 @@
 site :
+  0.2.1 :
+    name : Site v0.2.1
+    desc : Beta Version
+    numeric : 0.2.1.0
+    type:
+      - beta
+    changes :
+      - Subscription Management
   0.2.0 :
     name : Site v0.2.0
     desc : Beta Version

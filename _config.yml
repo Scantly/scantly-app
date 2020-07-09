@@ -75,6 +75,9 @@ app:
   content:            content
   namespace:          scantly
   tests:              _tests
+  stripe:
+    live:             pk_live_51H2Xi1Kif2GuZt0DWgUgUkF5SZaJxl0JsMeAjBnF9f30QXoFqEkVVGeDxf9jjjDQ7y74SlK5u0wyHwsbKHSEf2fQ00SOFXyMVa
+    testing:          pk_test_51H2Xi1Kif2GuZt0DZUnEnLPgiM4YNdFYVr38A67x1h6kXPR9oYIzNqcEKxSaRvgVHsNQAftp7F0JCkg9MsDNkI3x00Y9NcD2ie
   
 backgrounds:
   static:             "denys-nevozhai-izC9Yob6DGM-unsplash.jpg"
