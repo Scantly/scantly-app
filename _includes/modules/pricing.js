@@ -5,7 +5,8 @@ Page = function() {
 	if (this && this._isF && this._isF(this.Page)) return new this.Page().initialise(this);
 
 	/* <!-- Internal Constants --> */
-  const email = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+  const email = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi,
+        domain = /([a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
 	/* <!-- Internal Constants --> */
 
 	/* <!-- Internal Variables --> */
@@ -13,7 +14,8 @@ Page = function() {
 	/* <!-- Internal Variables --> */
 
   /* <!-- Internal Functions --> */
-  var _isEmail = value => value && value.match(email);
+  var _isEmail = value => value && value.match(email),
+      _isDomain = value => value && value.match(domain);
   /* <!-- Internal Functions --> */
   
 	/* <!-- External Visibility --> */
@@ -42,6 +44,7 @@ Page = function() {
 					message: ಠ_ಠ.Display.doc.get({
 						name: "SUBSCRIBE",
 					}),
+          tier: _$.data("tier"),
           client: _$.data("tier-client"),
 					product: _$.data("tier-product"),
           cost: _$.data("tier-cost"),
@@ -50,7 +53,7 @@ Page = function() {
 					details: _$.data("tier-details"),
           email: true,
           validate: values => values && 
-            _.find(values, value => value.name == "domain" && value.value) &&
+            _.find(values, value => value.name == "domain" && _isDomain(value.value)) &&
             _.find(values, value => value.name == "email" && _isEmail(value.value)),
 				}, dialog => {
           var _email = dialog.find("#email_input"),
@@ -61,12 +64,15 @@ Page = function() {
           });
         }).then(values => {
           if (values) {
-            var _client = _.find(values, value => value.name == "client"),
+            var _tier = _.find(values, value => value.name == "tier"),
+                _client = _.find(values, value => value.name == "client"),
                 _product = _.find(values, value => value.name == "product"),
                 _email = _.find(values, value => value.name == "email"),
+                _organisation = _.find(values, value => value.name == "organisation"),
                 _domain = _.find(values, value => value.name == "domain");
             if (_client && _product)
-              ಠ_ಠ.Subscribe(ಠ_ಠ).subscribe(_client.value, _product.value, _email.value,_domain.value);
+              ಠ_ಠ.Subscribe(ಠ_ಠ).subscribe(_tier.value, _client.value, _product.value, _email.value,
+                                              _organisation.value, _domain.value);
           }
         });
 			});

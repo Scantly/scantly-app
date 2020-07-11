@@ -25,14 +25,14 @@ Client = (options, factory) => {
     .then(response => response.json())
     .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
   
-  FN.endpoints = () => factory.Google.execute(options.directory, "list")
+  FN.endpoints = () => factory.Google.scripts.execute(options.directory, "list")
     .then(value => (value && value.done ? 
           value.error ? 
                     factory.Flags.error("Directory Error", value = value.error) :
           value.response && value.response.result ? 
                     factory.Flags.log("API Response", value = value.response.result) : null : null, value));
   
-  FN.locations = () => factory.Google.execute(options.directory, "manage")
+  FN.locations = () => factory.Google.scripts.execute(options.directory, "manage")
     .then(value => (value && value.done ? 
           value.error ? 
                     factory.Flags.error("Directory Error", value = value.error) :

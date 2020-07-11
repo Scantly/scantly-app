@@ -1,0 +1,94 @@
+##############################################################################
+#                                                                            #
+#     sss. d       b d ss.    sss.   sSSs. d ss.  d d ss.  d sss   d ss      #
+#   d      S       S S    b d       S      S    b S S    b S       S   ~o    #
+#   Y      S       S S    P Y      S       S    P S S    P S       S     b   #
+#     ss.  S       S S sSS'   ss.  S       S sS'  S S sSS' S sSSs  S     S   #
+#        b S       S S    b      b S       S   S  S S    b S       S     P   #
+#        P  S     S  S    P      P  S      S    S S S    P S       S    S    #
+#   ` ss'    "sss"   P `SS  ` ss'    "sss' P    P P P `SS  P sSSss P ss"     #
+#                                                                            #
+##############################################################################
+link: /subscribed/
+imports:
+  - name: underscore
+    load: first
+  - name: jquery
+    load: first
+  - name: popper
+    load: first
+  - name: handlebars
+    load: last
+  - name: hello
+    load: last
+  - name: urlparser
+    load: last
+  - name: bootstrap-js
+    load: last
+  - name: loki
+    load: last
+  - name: day
+    load: last
+  - name: waves-css
+    load: last
+  - name: waves-js
+    load: last
+  - name: mousetrap
+    load: last
+  - name: fetchjsonp
+    load: last
+helpers:
+  - network
+  - strings
+  - google
+  - css
+  - handlebars
+  - backgrounds
+modules:
+  - generic/dates
+  - generic/flags
+  - generic/controller
+  - generic/display
+  - generic/service
+  - generic/main
+  - generic/router
+  - subscribed/states
+scripts: 
+  - extends/regex
+  - extends/array
+  - extends/math
+css:
+  primary:
+    - custom/home
+templates:
+  - generic/text
+  - loader
+docs:
+  - subscribed/PUBLIC
+  - subscribed/FEATURES
+  - subscribed/README
+scopes:
+  google:
+    - scope: email
+      name: View your email address
+      reason: In order to display the address of your logged in account on the navigation menu, once you have signed in.
+      request: login
+    - scope: profile
+      name: View your basic profile info
+      reason: In order to display your name on the navigation menu, once you have signed in.
+      request: login
+    - scope: https://www.googleapis.com/auth/drive.file
+      name: View and manage Google Drive files and folders that you have opened or created with this app
+      reason: To create the Scantly Spreadsheet Log in your Google Drive
+      request: login
+    - scope: https://www.googleapis.com/auth/script.projects
+      name: Create and update Google Apps Script projects
+      reason: In order to create an end point for your service.
+      request: login
+    - scope: https://www.googleapis.com/auth/script.deployments
+      name: Create and update Google Apps Script deployments
+      reason: In order to configure an end point for your service.
+      request: login
+keys:
+  google:
+      oauth: 27787712718-se20fm7rvk582bgblm33ahlacjp2r659.apps.googleusercontent.com

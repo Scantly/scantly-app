@@ -17,21 +17,6 @@ App = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
-  FN.state = (from, to, title) => () => {
-    ಠ_ಠ.Display.tidy();
-    ಠ_ಠ.Display.state().change(from, to);
-    window.document.title = title ? `${title} | ${ಱ.title}` : ಱ.title;
-  };
-  
-  FN.view = {
-    
-    codes: () => FN.client.endpoints().then(FN.code.cards).then(ಠ_ಠ.Main.busy("Fetching Codes")),
-    
-    reader: location => FN.reader.read(location),
-    
-    manage: () => FN.client.locations().then(FN.code.locations).then(ಠ_ಠ.Main.busy("Fetching Details")),
-    
-  };
 	/* <!-- Internal Functions --> */
   
   /* <!-- Setup Functions --> */
@@ -40,7 +25,7 @@ App = function() {
     /* <!-- Setup required for everything, almost NOTHING is loaded at this point (e.g. ಠ_ಠ.Flags) --> */
     now: () => {
 
-      /* <!-- Set Up / Create the States Module --> */
+      /* <!-- Set Up / Create the State and Background Module --> */
       FN.states = ಠ_ಠ.States();
       
       FN.backgrounds = ಠ_ಠ.Backgrounds();
@@ -66,7 +51,7 @@ App = function() {
           application: ಱ
         }
       };
-      _.each(["Reader", "Client", "Code"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      _.each([], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -85,7 +70,6 @@ App = function() {
       
       /* <!-- Set the Initial State --> */
       ಠ_ಠ.Display.state().change(FN.states.views, FN.states.overview.in);
-      document.body.classList.remove("overflow-hidden");
       
       /* <!-- Bind Escape --> */
       if (window.Mousetrap) {
@@ -120,81 +104,34 @@ App = function() {
         states: FN.states.all,
         start: FN.setup.routed,
         routes: {
-          
           codes: {
-            matches: /CODES/i,
-            state: "authenticated",
-            length: 0,
-            requires: ["filesaver"],
-            keys: ["ctrl+alt+a", "ctrl+alt+A"],
-            fn: () => FN.view.codes()
-                        .then(FN.state(FN.states.views, FN.states.codes.in, "Codes"))
-                        .then(() => document.body.classList.remove("overflow-hidden"))
-          },
-          
-          manage: {
-            matches: /MANAGE/i,
-            state: "authenticated",
-            length: 0,
-            keys: ["ctrl+alt+m", "ctrl+alt+M"],
-            requires: ["clipboard"],
-            fn: () => FN.view.manage()
-                        .then(FN.state(FN.states.views, FN.states.manage.in, "Manage"))
-                        .then(() => document.body.classList.remove("overflow-hidden")),
-            routes : {
-              create: {
-                matches: /CREATE/i,
-                length: 0,
-                scopes: [
-                  "https://www.googleapis.com/auth/script.projects",
-                ],
-                permissive: true,
-                fn: () => true
-              }
-            }
-          },
-          
-          overview: {
-            matches: /OVERVIEW/i,
-            length: 0,
-            keys: ["ctrl+alt+o", "ctrl+alt+O", "ctrl+alt+h", "ctrl+alt+H"],
-            fn: () => ಠ_ಠ.Display.state().in(FN.states.overview.in) ? true :
-              ಠ_ಠ.Display.state().in(FN.states.views, true) ? 
-                (ಠ_ಠ.Router.clean(), this.route(ಠ_ಠ.Display.state().in("authenticated"))) : null
-          },
-          
-          reader: {
-            matches: /READER/i,
-            length: {
-              min: 0,
-              max: 2
-            },
-            requires: ["jsqr", "fetchjsonp", "ion-sound"],
-            keys: ["ctrl+alt+r", "ctrl+alt+R", "ctrl+alt+g", "ctrl+alt+G"],
-            fn: command => FN.view.reader(command)
-                              .then(FN.state(FN.states.views, FN.states.reader.in, "Reader"))
-                              .then(() => document.body.classList.add("overflow-hidden"))
-          },
-          
-          swap: {
-            matches: /SWAP/i,
-            length: {
-              min: 0,
-              max: 1,
-            },
-            fn: command => FN.reader.swap(command)
-          },
-          
-          test: {
             matches: /TEST/i,
-            length: {
-              min: 0,
-              max: 1,
-            },
-            requires: "fetchjsonp",
-            fn: command => FN.client.test(command)
+            state: "authenticated",
+            length: 0,
+            fn: () => ಠ_ಠ.Google.sheets.create("SCANTLY TEST SHEET")
+              .then(sheet => ಠ_ಠ.Google.scripts.create("SCANTLY TEST SCRIPT", sheet.spreadsheetId))
+              .then(script => ಠ_ಠ.Google.scripts.content(script).update([{
+                  "name": "Code",
+                  "type": "SERVER_JS",
+                  "source": "function doGet(e) {\n  return ContentService.createTextOutput(\"TEST\");\n}",
+                  "functionSet": {
+                    "values": [
+                      {
+                        "name": "doGet"
+                      }
+                    ]
+                  }
+                },
+                {
+                "name": "appsscript",
+                "type": "JSON",
+                "source": "{\n  \"timeZone\": \"Europe/London\",\n  \"dependencies\": {\n    \"libraries\": [{\n      \"userSymbol\": \"JSRSASIGN\",\n      \"libraryId\": \"1Q69EWHz30dKAVH2aTFL3Yj4oD-2QRvrOwSDs2xUf0NFCvZxSavurfrR-\",\n      \"version\": \"3\"\n    }]\n  },\n  \"webapp\": {\n    \"access\": \"ANYONE_ANONYMOUS\",\n    \"executeAs\": \"USER_DEPLOYING\"\n  },\n  \"exceptionLogging\": \"STACKDRIVER\",\n  \"runtimeVersion\": \"V8\"\n}",
+                "functionSet": {}
+              }]))
+              .then(script => ಠ_ಠ.Google.scripts.versions(script).create(1, "TEST"))
+              .then(script => ಠ_ಠ.Google.scripts.deployments(script).create(1))
+              .then(script => script.entryPoints[0].webApp.url)
           }
-          
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });

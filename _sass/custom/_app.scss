@@ -139,13 +139,13 @@
 // -- Action Menu -- //
 
 // -- Reader -- //
-.canvas, .video {
+.video {
   @media screen and (orientation:portrait) {
-    width: 80vw;
+    max-width: 80vw;
     max-height: 80vh;
   }
   @media screen and (orientation:landscape) {
-    width: 60vw;
+    max-width: 60vw;
     max-height: 70vh;
   }
 }

@@ -41,6 +41,7 @@ globals:
   importScripts: false
   jsQR: false
   ion: false
+  uuidv4: false
   moment: false
   quotedPrintable: false
   objectHash: false

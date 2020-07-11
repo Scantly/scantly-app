@@ -11,6 +11,7 @@
       <div class="modal-body">
         {{#if message}}{{{message}}}{{/if}}
         <form class="subscribe mt-3">
+          <input type="hidden" name="tier" value="{{tier}}">
           <input type="hidden" name="client" value="{{client}}">
           <input type="hidden" name="product" value="{{product}}">
           <input type="hidden" name="cost" value="{{cost}}">
@@ -20,9 +21,17 @@
               <span>Your Email Address</span>
               <span class="badge badge-danger ml-2">REQUIRED</span>
             </label>
-            <input id="email_input" type="email" name="email" class="form-control form-control-lg" maxlength="200" aria-describedby="email_help" placeholder="me@example.com" required>
-          <small id="email_help" class="form-text text-muted">Your email address will be used to set the initial manager of your account (you can add further management users later).</small>
+            <input id="email_input" type="email" name="email" class="form-control form-control-lg" maxlength="200" aria-describedby="email_help" placeholder="e.g. me@example.com" required>
+          <small id="email_help" class="form-text text-muted">Your email address will be used to set the initial manager of your account (you can add further management users later). This should match your G-Suite / Google Login.</small>
           </div>{{/if}}
+          <div class="form-group">
+            <label class="font-weight-bold d-flex align-items-center" for="organisation">
+              <span>Your Organisation</span>
+              <span class="badge badge-danger ml-2">REQUIRED</span>
+            </label>
+            <input id="organisation_input" type="text" name="organisation" class="form-control form-control-lg" maxlength="200" aria-describedby="organisation_help" placeholder="e.g. Example Organisation" required>
+          <small id="organisation_help" class="form-text text-muted">This is the name of your organisation, and will be displayed in the App for your users - to help show them which QR Code to use for your site.</small>
+          </div>
           <div class="form-group">
             <label class="font-weight-bold d-flex align-items-center" for="domain">
               <span>{{data}}</span>

@@ -202,9 +202,12 @@ Reader = (options, factory) => {
   
   var _refresh = sample => {
     if (ರ‿ರ.video.readyState === ರ‿ರ.video.HAVE_ENOUGH_DATA) {
-      ರ‿ರ.element.height = ರ‿ರ.video.videoHeight;
-      ರ‿ರ.element.width = ರ‿ರ.video.videoWidth;
-      ರ‿ರ.canvas.drawImage(ರ‿ರ.video, 0, 0, ರ‿ರ.element.width, ರ‿ರ.element.height);
+      var _video = $(ರ‿ರ.video),
+          _width = _video.width(),
+          _height = _video.height();
+      ರ‿ರ.element.height = _height;
+      ರ‿ರ.element.width = _width;
+      ರ‿ರ.canvas.drawImage(ರ‿ರ.video, 0, 0, ರ‿ರ.video.videoWidth, ರ‿ರ.video.videoHeight, 0, 0, _width, _height);
       return sample ? ರ‿ರ.canvas.getImageData(0, 0, ರ‿ರ.element.width, ರ‿ರ.element.height) : false;
     }
   };

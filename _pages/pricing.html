@@ -33,12 +33,17 @@ imports:
     load: last
   - name: handlebars
     load: last
+  - name: uuid_new
+    load: last
+  - name: fetchjsonp
+    load: last
   - name: stripe
     load: last
 templates:
-    - pricing/subscribe
+  - loader
+  - pricing/subscribe
 docs:
-    - pricing/SUBSCRIBE
+  - pricing/SUBSCRIBE
 extra-css:
   primary:
     - custom/pricing
@@ -46,6 +51,7 @@ extra-css:
     - bootstrap/list-group
     - bootstrap/input-group
     - bootstrap/forms
+    - custom/loader
 nav: true
 ---
 <div class="container-fluid my-3">
