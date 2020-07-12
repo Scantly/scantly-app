@@ -79,11 +79,13 @@ globals:
   Exporter: true
   Filters: true
   Saver: true
+  Create: true
   Google_Sheets_Grid: true
   Google_Sheets_Metadata: true
   Google_Sheets_Notation: true
   Google_Sheets_Format: true
   Google_Sheets_Properties: true
+  Google_Sheets_Sorts: true
   SaaD: true
   Reader: true
   States: true

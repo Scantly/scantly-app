@@ -40,7 +40,14 @@ imports:
 helpers:
   - network
   - strings
+  - google/sheets/notation
+  - google/sheets/grid
+  - google/sheets/format
+  - google/sheets/properties
+  - google/sheets/metadata
+  - google/sheets/sorts
   - google
+  - colours
   - css
   - handlebars
   - backgrounds
@@ -52,21 +59,29 @@ modules:
   - generic/service
   - generic/main
   - generic/router
+  - shared/client
+  - shared/subscribe
   - subscribed/states
+  - subscribed/create
 scripts: 
   - extends/regex
   - extends/array
   - extends/math
+  - extends/promises
 css:
   primary:
     - custom/home
 templates:
   - generic/text
   - loader
+  - subscribed/subscribed
+  - subscribed/subscriptions
+  - subscribed/subscription
+  - subscribed/link
 docs:
   - subscribed/PUBLIC
-  - subscribed/FEATURES
   - subscribed/README
+  - subscribed/INSTRUCTIONS
 scopes:
   google:
     - scope: email
@@ -80,15 +95,15 @@ scopes:
     - scope: https://www.googleapis.com/auth/drive.file
       name: View and manage Google Drive files and folders that you have opened or created with this app
       reason: To create the Scantly Spreadsheet Log in your Google Drive
-      request: login
+      request: lazy
     - scope: https://www.googleapis.com/auth/script.projects
       name: Create and update Google Apps Script projects
       reason: In order to create an end point for your service.
-      request: login
+      request: lazy
     - scope: https://www.googleapis.com/auth/script.deployments
       name: Create and update Google Apps Script deployments
       reason: In order to configure an end point for your service.
-      request: login
+      request: lazy
 keys:
   google:
       oauth: 27787712718-se20fm7rvk582bgblm33ahlacjp2r659.apps.googleusercontent.com

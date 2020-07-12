@@ -17,6 +17,33 @@ App = function() {
 	/* <!-- Internal Variables --> */
 
 	/* <!-- Internal Functions --> */
+  FN.subscriptions = id => FN.client.user()
+                  .then(user => FN.subscribe.subscriptions(user, id))
+                  .then(subscriptions => {
+                    ಠ_ಠ.Flags.log("Subscriptions:", subscriptions);
+                    if (subscriptions && _.isArray(subscriptions)) {
+                      
+                      if (subscriptions.length === 1) ಱ.subscription = subscriptions[0];
+                      
+                      ಠ_ಠ.Display.template.show({
+                        template: "subscribed",
+                        id: "subscriptions",
+                        instructions: ಠ_ಠ.Display.doc.get("INSTRUCTIONS"),
+                        table: ಠ_ಠ.Display.template.get({
+                          template: "subscriptions",
+                          subscriptions: _.map(subscriptions, subscription => {
+                            subscription.expires = subscription.expires ? new Date(subscription.expires) : "";
+                            return subscription;
+                          }),
+                        }),
+                        target: ಠ_ಠ.container,
+                      });
+                      
+                    }
+                  })
+                  .then(() => ಠ_ಠ.Display.state().enter(FN.states.subscribed.in))
+                  .catch(e => ಠ_ಠ.Flags.error("Subscriptions Service Error:", e))
+                  .then(ಠ_ಠ.Main.busy("Fetching Details"));
 	/* <!-- Internal Functions --> */
   
   /* <!-- Setup Functions --> */
@@ -51,7 +78,8 @@ App = function() {
           application: ಱ
         }
       };
-      _.each([], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
+      
+      _.each(["Client", "Subscribe", "Create"], module => FN[module.toLowerCase()] = ಠ_ಠ[module](_options, ಠ_ಠ));
 
       /* <!-- Get Window Title --> */
       ಱ.title = window.document.title;
@@ -76,7 +104,10 @@ App = function() {
         window.Mousetrap.unbind("esc");
         window.Mousetrap.bind("esc", () => $(".collapse.show").removeClass("show"));
       }
-        
+      
+      /* <!-- Show Subscriptions --> */
+      if (ಱ.id) FN.subscriptions(ಱ.id);
+      
     },
 
   };
@@ -99,39 +130,58 @@ App = function() {
       
 			/* <!-- Set Up the Default Router --> */
       this.route = ಠ_ಠ.Router.create({
-        name: "Main",
+        name: "Subscribed",
         state: ರ‿ರ,
         states: FN.states.all,
         start: FN.setup.routed,
+        public: "PUBLIC",
         routes: {
-          codes: {
-            matches: /TEST/i,
-            state: "authenticated",
-            length: 0,
-            fn: () => ಠ_ಠ.Google.sheets.create("SCANTLY TEST SHEET")
-              .then(sheet => ಠ_ಠ.Google.scripts.create("SCANTLY TEST SCRIPT", sheet.spreadsheetId))
-              .then(script => ಠ_ಠ.Google.scripts.content(script).update([{
-                  "name": "Code",
-                  "type": "SERVER_JS",
-                  "source": "function doGet(e) {\n  return ContentService.createTextOutput(\"TEST\");\n}",
-                  "functionSet": {
-                    "values": [
-                      {
-                        "name": "doGet"
-                      }
-                    ]
-                  }
-                },
-                {
-                "name": "appsscript",
-                "type": "JSON",
-                "source": "{\n  \"timeZone\": \"Europe/London\",\n  \"dependencies\": {\n    \"libraries\": [{\n      \"userSymbol\": \"JSRSASIGN\",\n      \"libraryId\": \"1Q69EWHz30dKAVH2aTFL3Yj4oD-2QRvrOwSDs2xUf0NFCvZxSavurfrR-\",\n      \"version\": \"3\"\n    }]\n  },\n  \"webapp\": {\n    \"access\": \"ANYONE_ANONYMOUS\",\n    \"executeAs\": \"USER_DEPLOYING\"\n  },\n  \"exceptionLogging\": \"STACKDRIVER\",\n  \"runtimeVersion\": \"V8\"\n}",
-                "functionSet": {}
-              }]))
-              .then(script => ಠ_ಠ.Google.scripts.versions(script).create(1, "TEST"))
-              .then(script => ಠ_ಠ.Google.scripts.deployments(script).create(1))
-              .then(script => script.entryPoints[0].webApp.url)
-          }
+          
+          subscription: {
+            matches: /ID/i,
+            length: 1,
+            fn: id => ಠ_ಠ.me ? FN.subscriptions(id) : ಱ.id = id,
+          },
+         
+          create: {
+            matches: /CREATE/i,
+            state: "subscribed",
+            scopes: [
+              "https://www.googleapis.com/auth/drive.file",
+              "https://www.googleapis.com/auth/script.projects",
+              "https://www.googleapis.com/auth/script.deployments",
+            ],
+            length: 1,
+            fn: code => ಱ.subscription && code == ಱ.subscription.code ?
+                          FN.create.sheet(`${ಱ.subscription.organisation} | Log`)
+                            .then(id => ಠ_ಠ.Google.scripts.create(`${ಱ.subscription.organisation} | Log | Script`, ಱ.spreadsheet = id))
+                            .then(script => FN.create.script(script, ಱ.subscription.public))
+                            .then(script => FN.create.app(script))
+                            .then(url => {
+                              ಠ_ಠ.Flags.log("Created Endpoint URL:", url);
+                              var _url = url.split("/"),
+                                  _endpoint = _url[_url.length - 2];
+                              ಠ_ಠ.Flags.log("Endpoint:", _endpoint);
+                              var _actions = $(`[data-code='${code}'] [data-action='create']`)
+                                .css("cursor", "none")
+                                .css("pointer-events", "none")
+                                .removeClass("badge-dark")
+                                .addClass("badge-success o-50")
+                                .append($("<span />", {
+                                  class: "md-24 md-light material-icons",
+                                  text: "check_circle"
+                                })).parent("div");
+                              ಠ_ಠ.Display.template.show({
+                                template: "link",
+                                id: ಱ.spreadsheet,
+                                target: _actions,
+                              });
+                              
+                            })
+                            .catch(e => ಠ_ಠ.Flags.error("Logging Sheet Creation Error:", e))
+                            .then(ಠ_ಠ.Main.busy("Creating Sheet and Script")) : Promise.resolve(false)
+          },
+          
         },
         route: () => false, /* <!-- PARAMETERS: handled, command --> */
       });

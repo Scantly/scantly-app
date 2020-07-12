@@ -66,9 +66,9 @@ modules:
   - generic/service
   - generic/main
   - generic/router
+  - shared/client
   - main/states
   - main/reader
-  - main/client
   - main/code
 scripts: 
   - extends/regex

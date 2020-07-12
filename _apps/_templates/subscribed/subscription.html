@@ -1,0 +1,17 @@
+{% raw %}
+<tr data-code="{{code}}">
+  <th scope="row" class="align-middle">{{code}}</th>
+  <td class="align-middle">{{organisation}}</td>
+  <td class="align-middle">{{domain}}</td>
+  <td class="align-middle">{{tier}}</td>
+  <td class="align-middle">{{localeDate expires true}}</td>
+  <td class="align-middle">
+    <div class="d-flex flex-row justify-content-between">
+      {{#unless endpoint~}}<a href="#create.{{code}}" data-action="create" class="badge badge-dark d-flex align-items-center">
+        <span class="md-24 md-light material-icons">memory</span>
+        <span class="mx-1">Create Sheet Log</span>
+      </a>{{~/unless}}
+    </div>
+  </td>
+</tr>
+{% endraw %}

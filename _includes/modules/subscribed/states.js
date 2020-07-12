@@ -7,10 +7,8 @@ States = () => {
 
   /* <!-- Internal Constants --> */
   const STATE_OVERVIEW = "overview",
-        STATE_CODES = "codes",
-        STATE_READER = "reader",
-        STATE_MANAGE = "manage",
-        STATES = [STATE_OVERVIEW, STATE_CODES, STATE_READER, STATE_MANAGE];
+        STATE_SUBSCRIBED = "subscribed",
+        STATES = [STATE_OVERVIEW, STATE_SUBSCRIBED];
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Options --> */
@@ -34,23 +32,12 @@ States = () => {
       in : STATE_OVERVIEW,
     },
     
-    codes: {
-      in : STATE_CODES,
-    },
-    
-    reader : {
-      in : STATE_READER,
-    },
-    
-    manage : {
-      in : STATE_MANAGE,
+    subscribed: {
+      in : STATE_SUBSCRIBED,
     },
     
     views : [
       STATE_OVERVIEW,
-      STATE_CODES,
-      STATE_READER,
-      STATE_MANAGE,
     ],
     
   };

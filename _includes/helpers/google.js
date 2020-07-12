@@ -1668,10 +1668,10 @@ Google_API = (options, factory) => {
         fields: "files(description,id,modifiedByMeTime,name,version)",
       }),
       
-      execute: (id, method, data) => _call(NETWORKS.scripts.post, `/v1/scripts/${id}:run`, {
+      execute: (id, method, data) => _call(NETWORKS.scripts.post, `/v1/scripts/${id}:run`, STRIP_NULLS({
         function: method,
-        parameters: data,
-      }),
+        parameters: data ? _.isArray(data) ? data : [data] : null,
+      })),
 
       create: (title, parent) => _call(NETWORKS.scripts.post, "/v1/projects", STRIP_NULLS({
         "title": title,

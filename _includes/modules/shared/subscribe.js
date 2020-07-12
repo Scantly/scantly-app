@@ -1,4 +1,4 @@
-Subscribe = factory => {
+Subscribe = (options, factory) => {
   "use strict";
 
   /* <!-- MODULE: Provides an interface to provide common functionality --> */
@@ -8,7 +8,7 @@ Subscribe = factory => {
   /* <!-- Public Constants --> */
   const DEFAULTS = {
     url: key => `https://script.google.com/macros/s/${key}/exec`,
-    endpoint: "AKfycbx6KtNh11n7NRU3UWcsv4xwxGYHvL-pl8Tzr4mEMKp1JQ3Wxluz"
+    endpoint: "AKfycbz3sCwZ-9ZSjeobllF_CnTtqdOtQG7yysLrkModrDEZ1-U_aQoC"
   }, FN = {};
   /* <!-- Public Constants --> */
   
@@ -17,6 +17,10 @@ Subscribe = factory => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Public Functions --> */
+  FN.action = (user, user_key, user_algorithm) => (action, params) => fetchJsonp(`${DEFAULTS.url(DEFAULTS.endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}&a=${action}${params ? _.reduce(params, (memo, value, key) => `${memo}&p_${key}=${value}`, "") : ""}`)
+    .then(response => response.json())
+    .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
+  
   FN.subscribe = (tier, client, price, email, organisation, domain) => {
     factory.Flags.log("Creating Subscription for:", domain);
     var customer = uuidv4();
@@ -28,7 +32,7 @@ Subscribe = factory => {
       return stripe.redirectToCheckout({
         lineItems: [{price: price, quantity: 1}],
         mode: "subscription",
-        successUrl: factory.Flags.full(`subscribed?id=${customer}`),
+        successUrl: factory.Flags.full(`subscribed?i=google,id.${customer}`),
         cancelUrl: factory.Flags.full("pricing"),
         customerEmail: email,
         clientReferenceId: customer,
@@ -44,6 +48,11 @@ Subscribe = factory => {
       status : "Processing Subscription Request",
       fn : true
     }));
+  };
+  
+  FN.subscriptions = (user, id) => {
+    factory.Flags.log(`Fetching Subscription ${id} for:`, user.email);
+    return FN.action(user.user, user.key, user.algorithm)("subscriptions", {id: id});
   };
   /* <!-- Public Functions --> */
   

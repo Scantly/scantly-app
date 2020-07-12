@@ -6,16 +6,16 @@
   {% if page.nav or (page.app and page.layout == "app") %}<div class="navbar-nav-scroll">
     <ul class="navbar-nav bd-navbar-nav flex-row">
       <li class="nav-item">
-        <a class="nav-link" href="{% if page.nav %}/{% endif %}#overview">Home</a>
+        <a class="nav-link" href="{% if page.nav or page.app != 'main' %}/{% endif %}#overview">Home</a>
       </li>
       {% unless page.nav %}<li class="nav-item">
-        <a class="nav-link disabled state-authenticated" href="#codes">Codes</a>
+        <a class="nav-link disabled state-authenticated" href="{% if page.app != 'main' %}/{% endif %}#codes">Codes</a>
       </li>{% endunless %}
       <li class="nav-item">
-        <a class="nav-link" href="{% if page.nav %}/{% endif %}#reader">Reader</a>
+        <a class="nav-link" href="{% if page.nav or page.app != 'main' %}/{% endif %}#reader">Reader</a>
       </li>
       {% unless page.nav %}<li class="nav-item">
-        <a class="nav-link disabled state-authenticated" href="#manage">Manage</a>
+        <a class="nav-link disabled state-authenticated" href="{% if page.app != 'main' %}/{% endif %}#manage">Manage</a>
       </li>{% endunless %}
     </ul>
   </div>

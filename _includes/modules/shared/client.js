@@ -32,7 +32,21 @@ Client = (options, factory) => {
           value.response && value.response.result ? 
                     factory.Flags.log("API Response", value = value.response.result) : null : null, value));
   
-  FN.locations = () => factory.Google.scripts.execute(options.directory, "manage")
+  FN.locations = () => factory.Google.scripts.execute(options.directory, "list", "locations")
+    .then(value => (value && value.done ? 
+          value.error ? 
+                    factory.Flags.error("Directory Error", value = value.error) :
+          value.response && value.response.result ? 
+                    factory.Flags.log("API Response", value = value.response.result) : null : null, value));
+  
+  FN.managed = () => factory.Google.scripts.execute(options.directory, "list", "managed")
+    .then(value => (value && value.done ? 
+          value.error ? 
+                    factory.Flags.error("Directory Error", value = value.error) :
+          value.response && value.response.result ? 
+                    factory.Flags.log("API Response", value = value.response.result) : null : null, value));
+  
+  FN.user = () => factory.Google.scripts.execute(options.directory, "list", "user")
     .then(value => (value && value.done ? 
           value.error ? 
                     factory.Flags.error("Directory Error", value = value.error) :
