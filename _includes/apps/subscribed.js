@@ -38,7 +38,6 @@ App = function() {
                         }),
                         target: ಠ_ಠ.container,
                       });
-                      
                     }
                   })
                   .then(() => ಠ_ಠ.Display.state().enter(FN.states.subscribed.in))
@@ -153,7 +152,7 @@ App = function() {
             ],
             length: 1,
             fn: code => ಱ.subscription && code == ಱ.subscription.code ?
-                          FN.create.sheet(`${ಱ.subscription.organisation} | Log`)
+                          FN.create.log(`${ಱ.subscription.organisation} | Log`)
                             .then(id => ಠ_ಠ.Google.scripts.create(`${ಱ.subscription.organisation} | Log | Script`, ಱ.spreadsheet = id))
                             .then(script => FN.create.script(script, ಱ.subscription.public))
                             .then(script => FN.create.app(script))
@@ -176,6 +175,10 @@ App = function() {
                                 id: ಱ.spreadsheet,
                                 target: _actions,
                               });
+                              
+                              /* <!-- Update Service with Endpoint --> */
+                              return FN.client.user()
+                                .then(user => FN.subscribe.endpoint(user, ಱ.subscription.id, ಱ.subscription.code, _endpoint));
                               
                             })
                             .catch(e => ಠ_ಠ.Flags.error("Logging Sheet Creation Error:", e))

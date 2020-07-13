@@ -75,8 +75,8 @@ Reader = (options, factory) => {
         key: location[1]
       };
       ರ‿ರ.location.parsed = /^(.+)\s+<=\s+(\d{4}-\d{2}-\d{2}$)/gi.exec(ರ‿ರ.location.raw);
-      ರ‿ರ.location.valid = new Date().toISOString().split("T")[0] <= ರ‿ರ.location.parsed[2] ? true : false;
-      ರ‿ರ.location.value = ರ‿ರ.location.parsed[1];
+      ರ‿ರ.location.valid = ರ‿ರ.location.parsed ? new Date().toISOString().split("T")[0] <= ರ‿ರ.location.parsed[2] ? true : false : true;
+      ರ‿ರ.location.value = ರ‿ರ.location.parsed ? ರ‿ರ.location.parsed[1] : ರ‿ರ.location.raw;
       factory.Flags.log("READER LOCATION SET:", ರ‿ರ.location);
       if (notify && window.ion && ರ‿ರ.sound !== false) _.defer(() => ion.sound.play("location_set"));
     } else {

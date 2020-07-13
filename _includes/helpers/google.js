@@ -1476,12 +1476,17 @@ Google_API = (options, factory) => {
           "requests": identified && meta ? updates.concat(metadata(id, meta)) : updates,
           "includeSpreadsheetInResponse": identified || !meta,
           "responseIncludeGridData": false,
-        }, "application/json").then(sheet => !identified && meta && sheet && sheet.replies ?
+        }, "application/json").then(sheet => {
+          var sheetId = sheet.replies[0].addSheet.properties.sheetId,
+              sheetTitle = sheet.replies[0].addSheet.properties.title;
+          return (!identified && meta && sheet && sheet.replies ?
             _call(NETWORKS.sheets.post, `v4/spreadsheets/${spreadsheet}:batchUpdate`, {
               "requests": metadata(sheet.replies[0].properties.sheetId, meta),
               "includeSpreadsheetInResponse": true,
               "responseIncludeGridData": false,
-            }, "application/json").then(sheet => sheet.updatedSpreadsheet) : sheet.updatedSpreadsheet);
+            }, "application/json").then(sheet => sheet.updatedSpreadsheet) : Promise.resolve(sheet.updatedSpreadsheet))
+          .then(sheet => (sheet.sheetId = sheetId, sheet.sheetTitle = sheetTitle, sheet));
+        });
           
       },
 
