@@ -10,6 +10,21 @@ Create = (options, factory) => {
     property : {
       name: "SCANTLY",
       value: "ENDPOINT"
+    },
+    subscription : {
+      name: "SUBSCRIPTION",
+    },
+    version : {
+      name: "VERSION",
+    },
+    script_id : {
+      name: "SCRIPT_ID",
+    },
+    regex : {
+      array: {
+        open: /\[\s*{/gi,
+        close: /}\s*\]/gi
+      }
     }
   }, FN = {};
   /* <!-- Internal Constants --> */
@@ -23,6 +38,10 @@ Create = (options, factory) => {
   options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
   /* <!-- Internal Options --> */
 
+  /* <!-- Internal Variables --> */
+  var ರ‿ರ = {}; /* <!-- Session State --> */
+  /* <!-- Internal Variables --> */
+  
   /* <!-- Internal Functions --> */
   FN.helpers = sheetId => ({
     grid: factory.Google_Sheets_Grid({
@@ -78,18 +97,69 @@ Create = (options, factory) => {
       })
   };
   /* <!-- Sheet Functions --> */
+  
+  /* <!-- Main Script Functions --> */
+  FN.main = {
+    
+    version : files => {
+      var _versions = _.find(files, file => file.name == "Versions"),
+          _version;
+      if (_versions) {
+        var _open = options.regex.array.open.exec(_versions.source),
+            _close = options.regex.array.close.exec(_versions.source);
+        if (_open && _close) {
+          var _array = _versions.source.substring(_open.index, _close.index + _close[0].length);
+          if (_array) {
+            _array = JSON.parse(_array.trim());
+            _version = _.isArray(_array) ? _array[0] : null;
+            if (_version && _.isObject(_version)) _version = _.values(_version)[0];
+          }
+        }
+      }
+      factory.Flags.log("LATEST VERSION:", _version);
+      return (ರ‿ರ.latest = _version);
+    },
+    
+    code : () => window.fetch ? window.fetch("/client/register.json?d=" + Date.now(), {cache: "no-store"})
+      .then(response => response.status == 200 ? response.json() : false) : Promise.resolve(false),
+    
+    key : (files, key) => {
+      var _crypto = _.find(files, file => file.name == "Crypto");
+      if (_crypto && _crypto.source)
+        _crypto.source = _crypto.source.replace(/\{\{\{\s?KEY\s?\}\}\}/gi, _.compact(key.trim().split(/\n|\r|\f/gm)).join("\\\n"));
+      return files;
+    },
+    
+    prepare : key => FN.main.code()
+      .then(code => {
+        if (!ರ‿ರ.latest) FN.main.version(code.files);
+        var _code = FN.main.key(code.files, key);
+        return _.map(_code, file => _.omit(file, "id"));
+      })
+      .catch(e => factory.Flags.error("Fetch Error", e ? e : "No Inner Error"), false),
+  
+  };
+  /* <!-- Main Script Functions --> */
   /* <!-- Internal Functions --> */
 
-  /* <!-- Public Functions --> */
-  FN.app = script => factory.Google.scripts.versions(script).create(1, "Deployment Version")
-    .then(script => factory.Google.scripts.deployments(script).create(1))
+  /* <!-- Public Functions --> */    
+  FN.app = (script, version, id) => factory.Google.scripts.versions(script).create(version || 1,
+                                  `Deployment Version${ರ‿ರ.latest ? ` [Version: ${ರ‿ರ.latest.version}]` : ""}`)
+    .then(script => id && version && version > 1 ? factory.Google.scripts.deployments(script).update(id, version) :
+          factory.Google.scripts.deployments(script).create(version || 1))
     .then(script => script.entryPoints[0].webApp.url);
 
-  FN.log = name => {
+  FN.log = (name, subscription) => {
     var _colours = factory.Google_Sheets_Format({}, factory);
     return FN.sheet.create(name, "USERS", _colours.colour("MAGENTA"))
       .then(value => _.tap(value, value => factory.Google.files.update(
-          value.sheet.spreadsheetId, factory.Google.files.tag(options.property.name, options.property.value))))
+          value.sheet.spreadsheetId, _.extend(
+            factory.Google.files.tag(options.property.name, options.property.value),
+            factory.Google.files.tags([
+              [options.subscription.name, subscription],
+              [options.version.name, ರ‿ರ.latest.version],
+            ], true)
+          ))))
       .then(value => Promise.each([
         Promise.resolve(value),
         FN.sheet.add(value.sheet.spreadsheetId, "NAMES", null, _colours.colour("LIME")),
@@ -226,72 +296,29 @@ Create = (options, factory) => {
       ]).then(values => values[0]));
   };
 
-  FN.script = (script, key) => factory.Google.scripts.content(script).update([{
-      "name": "Server",
-      "type": "SERVER_JS",
-      "source": "function doGet(e){\n  return handleResponse(e);\n}\n\nfunction doPost(e){\n  return handleResponse(e);\n}\n\nfunction handleResponse(e) {\n  \n  // -- Get Parameters from Query String -- //\n  var _user = e.parameter ? e.parameter.u : null,\n      _user_key = e.parameter ? e.parameter.u_k : null,\n      _location = e.parameter ? e.parameter.l : null,\n      _location_key = e.parameter ? e.parameter.l_k : null,\n      _callback = e.parameter ? e.parameter.callback : null;\n      \n  // -- Base64 Decode as required -- //\n  if (_user) _user = Utilities.newBlob(Utilities.base64Decode(_user)).getDataAsString();\n  if (_location) _location = Utilities.newBlob(Utilities.base64Decode(_location)).getDataAsString();\n  \n  // -- Log Action -- //\n  var _result = log(_user, _user_key, _location, _location_key);\n  \n  // -- Return to JSONP callback function, if required -- //\n  if (_callback) return ContentService\n      .createTextOutput(_callback + \"(\" + JSON.stringify(_result) + \")\")   \n      .setMimeType(ContentService.MimeType.JAVASCRIPT); \n\n}",
-      "functionSet": {
-        "values": [{
-            "name": "doGet"
-          },
-          {
-            "name": "doPost"
-          },
-          {
-            "name": "handleResponse"
-          }
-        ]
-      }
-    },
-    {
-      "name": "appsscript",
-      "type": "JSON",
-      "source": "{\n  \"timeZone\": \"Europe/London\",\n  \"dependencies\": {\n    \"libraries\": [{\n      \"userSymbol\": \"JSRSASIGN\",\n      \"libraryId\": \"1Q69EWHz30dKAVH2aTFL3Yj4oD-2QRvrOwSDs2xUf0NFCvZxSavurfrR-\",\n      \"version\": \"3\"\n    }]\n  },\n  \"webapp\": {\n    \"access\": \"ANYONE_ANONYMOUS\",\n    \"executeAs\": \"USER_DEPLOYING\"\n  },\n  \"exceptionLogging\": \"STACKDRIVER\",\n  \"runtimeVersion\": \"V8\"\n}",
-      "functionSet": {}
-    },
-    {
-      "name": "API",
-      "type": "SERVER_JS",
-      "source": "function parse(value, key, public_key) {\n\n  if (value && key) {\n  \n    var _verified = _verify(value, key, public_key);\n    \n    if (_verified === true) {\n    \n      var _parsed = /^(.+)\\s+\u003c=\\s+(\\d{4}-\\d{2}-\\d{2}$)/gi.exec(value);\n      \n      if (_parsed && _parsed.length === 3) {\n      \n        var _until = _parsed[2], \n            _return = {\n              raw : value,\n              value : _parsed[1],\n              verified : _verified\n            };\n        \n        if (new Date().toISOString().split(\"T\")[0] \u003c= _until) {\n          \n          _return.valid = true;\n          \n        } else {\n          \n          _return.valid = false;\n          _return.text = Utilities.formatString(\"%s [EXPIRED]\", _return.value);\n            \n        }\n        \n        return _return;\n        \n      } else {\n      \n        return _verified;\n      \n      }\n      \n    } else {\n    \n      return _verified;\n      \n    }\n  \n  }\n  \n}\n\nfunction log(user, user_key, location, location_key) {\n\n  var _user = parse(user, user_key),\n      _location = parse(location, location_key),\n      _presence = null,\n      _verified = false;\n      \n  if (_user === true || (_user && _user.verified === true)) {\n  \n    var _value = _user.value || user,\n        _cache = CacheService.getScriptCache(),\n        _current = _cache.get(_value) ? false : true;\n    \n    _current ? _cache.put(_value, \"1\", 48 * 60 * 60) : _cache.remove(_value); // 48hr Cache Time\n    _presence = _current;\n    \n    SpreadsheetApp.getActiveSpreadsheet().getSheetByName(\"LOG\").appendRow([new Date(),\n      _location ? _location === true ? location : _location.verified === true ? _location.valid === true ? _location.value : _location.text : \"\" : \"\",\n      _presence === true ? \"SIGN-IN\" : _presence === false ? \"SIGN-OUT\" : \"SCAN\",\n      _user === true ? user : _user.valid === true ? _user.value : _user.text]);\n    \n    _verified = true;\n    \n  }\n  \n  return {result : _verified, valid: _user === true || (_user && _user.valid === true), presence: _presence};\n  \n}",
-      "functionSet": {
-        "values": [{
-            "name": "parse"
-          },
-          {
-            "name": "log"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Crypto",
-      "type": "SERVER_JS",
-      "source": "var PUBLIC_KEY = \"" + _.compact(key.trim().split(/\n|\r|\f/gm)).join("\\\n") + "\"\n\nvar navigator = {}, window = {};\n\nfunction _verify(value, signature, public_key) {\n  var sig_Verify = new JSRSASIGN.KJUR.crypto.Signature({\"alg\": \"SHA256withRSA\"});\n  sig_Verify.init(public_key || PUBLIC_KEY);\n  sig_Verify.updateString(value);\n  return sig_Verify.verify(signature);\n}",
-      "functionSet": {
-        "values": [{
-          "name": "_verify"
-        }]
-      }
-    },
-    {
-      "name": "Entry",
-      "type": "SERVER_JS",
-      "source": "function onInstall(e) {\n  onOpen();\n}\n\nfunction onOpen() {\n  var ui = SpreadsheetApp.getUi();\n  ui.createMenu(\"Tasks\")\n      .addItem(\"Authorise\", \"authoriseServer\")\n      .addToUi();\n};\n\nfunction authoriseServer() {\n  ScriptApp.getOAuthToken();\n}",
-      "functionSet": {
-        "values": [
-          {
-            "name": "onInstall"
-          },
-          {
-            "name": "onOpen"
-          },
-          {
-            "name": "authoriseServer"
-          }
-        ]
-      }
-    }
-  ]);
+  FN.script = (script, key) => FN.main.prepare(key).then(code => factory.Google.scripts.content(script).update(code));
+
+  FN.query = () => `${options.property.name}=${options.property.value}`;
+    
+  FN.filter = id => file => file.appProperties && file.appProperties[options.subscription.name] == id;
+  
+  FN.script_id = {
+    
+    get : file => file.appProperties && file.appProperties[options.script_id.name],
+    
+    set : id => factory.Google.files.tag(options.script_id.name, id, true),
+    
+  },
+  
+  FN.version = {
+   
+    get : file => file.appProperties && file.appProperties[options.version.name],
+    
+    set : () => factory.Google.files.tag(options.version.name, ರ‿ರ.latest.version, true),
+    
+  },
+  
+  FN.latest = () => ರ‿ರ.latest ? Promise.resolve(ರ‿ರ.latest) : FN.main.code().then(code => FN.main.version(code.files));
   /* <!-- Public Functions --> */
 
   return FN;

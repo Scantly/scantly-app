@@ -78,10 +78,17 @@ templates:
   - subscribed/subscriptions
   - subscribed/subscription
   - subscribed/link
+  - subscribed/upgrade
 docs:
   - subscribed/PUBLIC
   - subscribed/README
   - subscribed/INSTRUCTIONS
+  - subscribed/MANAGE
+  - subscribed/titles/UPGRADE_CLIENT
+  - subscribed/titles/VERSION_CLIENT
+  - subscribed/titles/HELP_CLIENT
+  - subscribed/titles/CANCEL_CLIENT
+  - subscribed/titles/CREATE_CLIENT
 scopes:
   google:
     - scope: email
@@ -95,7 +102,7 @@ scopes:
     - scope: https://www.googleapis.com/auth/drive.file
       name: View and manage Google Drive files and folders that you have opened or created with this app
       reason: To create the Scantly Spreadsheet Log in your Google Drive
-      request: lazy
+      request: login
     - scope: https://www.googleapis.com/auth/script.projects
       name: Create and update Google Apps Script projects
       reason: In order to create an end point for your service.

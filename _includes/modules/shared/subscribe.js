@@ -8,7 +8,8 @@ Subscribe = (options, factory) => {
   /* <!-- Public Constants --> */
   const DEFAULTS = {
     url: key => `https://script.google.com/macros/s/${key}/exec`,
-    endpoint: "AKfycbz3sCwZ-9ZSjeobllF_CnTtqdOtQG7yysLrkModrDEZ1-U_aQoC"
+    endpoint: "AKfycbz3sCwZ-9ZSjeobllF_CnTtqdOtQG7yysLrkModrDEZ1-U_aQoC",
+    timeout: 20000
   }, FN = {};
   /* <!-- Public Constants --> */
   
@@ -16,8 +17,14 @@ Subscribe = (options, factory) => {
   var s = factory.Strings(), e = s.base64.encode;
   /* <!-- Internal Functions --> */
   
+  /* <!-- Internal Options --> */
+  options = _.defaults(options ? _.clone(options) : {}, DEFAULTS);
+  /* <!-- Internal Options --> */
+  
   /* <!-- Public Functions --> */
-  FN.action = (user, user_key, user_algorithm) => (action, params) => fetchJsonp(`${DEFAULTS.url(DEFAULTS.endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}&a=${action}${params ? _.reduce(params, (memo, value, key) => `${memo}&p_${key}=${value}`, "") : ""}`)
+  FN.action = (user, user_key, user_algorithm) => (action, params, timeout) => fetchJsonp(`${DEFAULTS.url(DEFAULTS.endpoint)}?u=${s.base64.encode(user)}&u_k=${user_key}&u_a=${s.base64.encode(user_algorithm)}&a=${action}${params ? _.reduce(params, (memo, value, key) => `${memo}&p_${key}=${value}`, "") : ""}`, {
+    timeout: timeout || options.timeout,
+  })
     .then(response => response.json())
     .then(value => (factory.Flags.log(`Web API Result: ${JSON.stringify(value)}`, value), value));
   
@@ -51,8 +58,8 @@ Subscribe = (options, factory) => {
   };
   
   FN.subscriptions = (user, id) => {
-    factory.Flags.log(`Fetching Subscription ${id} for:`, user.email);
-    return FN.action(user.user, user.key, user.algorithm)("subscriptions", {id: id});
+    factory.Flags.log(`Fetching Subscription ${id ? id : "ALL"} for:`, user.email);
+    return FN.action(user.user, user.key, user.algorithm)("subscriptions", id ? {id: id} : null);
   };
   
   FN.endpoint = (user, id, code, endpoint) => {

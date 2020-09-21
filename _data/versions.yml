@@ -1,4 +1,14 @@
 site :
+  0.3.0 :
+    name : Site v0.3.0
+    desc : Beta Version
+    numeric : 0.3.0.0
+    type:
+      - beta
+    changes :
+      - Subscription Management
+      - Upgrade Sheet Log Code
+      - Matching Subscription Sheet Log Properties
   0.2.4 :
     name : Site v0.2.4
     desc : Beta Version

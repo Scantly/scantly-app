@@ -28,21 +28,17 @@ a {text-decoration: none; color: inherit;}
 // -- Regular Elements -- //
 
 // -- Scrollbars -- //
-::-webkit-scrollbar {
-    width: 0.5em;
-}
-
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(100, 100, 100, 0.8);
+    background: rgba(100, 100, 100, 0.9);
 }
 
 ::-webkit-scrollbar-corner,
 ::-webkit-scrollbar-thumb:window-inactive {
-    background: rgba(100, 100, 100, 0.4);
+    background: rgba(100, 100, 100, 0.8);
 }
 // -- Scrollbars -- //
 

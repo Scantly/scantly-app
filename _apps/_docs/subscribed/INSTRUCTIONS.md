@@ -1,3 +1,6 @@
-Now that you have subscribed, you can create a new __Google Sheet__ log. This will be where the data for your organisation is stored, and also where the code that the reader talks to is run from.
+Now that you have subscribed, you can create a new __Google Sheet__ log. This will be where the data for your organisation is stored, and also where the code that the reader talks to is run from. In order for this sheet to be created, you will need to grant a [few permissions](/privacy){:target="_blank" rel="noopener"}. You will be prompted to authorise these permissions when you click the __Create Sheet Log__{:.badge .badge-dark} button below.
 
-In order for this sheet to be created, you need to grant a few permissions.
+The extra permissions are required so that script code can run behind your log sheet, which enables sign-ins and sign-outs to appear there as soon as they have been scanned. The script behind the log sheet acts as it's own little web-server in the cloud, listening for codes that have been scanned and then writing that data into the sheet.
+
+__IMPORTANT__: Once the log sheet has been created, click on the __Open Sheet__{:.badge .badge-primary} button. This will open the sheet log (that has been created in your Google Drive). When this has loaded, please run the __Authorise__ command from the __Tasks__ menu inside the sheet. This will prompt you to authorise the script to listen for scanned codes and update the sheet accordingly.
+{:.alert .alert-dark}

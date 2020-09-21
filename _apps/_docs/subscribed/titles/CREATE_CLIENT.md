@@ -1,0 +1,1 @@
+This will create a __Google Sheet__, where scanned sign-in and sign-out events will be stored for you.

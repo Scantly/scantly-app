@@ -8,6 +8,7 @@ States = () => {
   /* <!-- Internal Constants --> */
   const STATE_OVERVIEW = "overview",
         STATE_SUBSCRIBED = "subscribed",
+        STATE_WORKING = "working",
         STATES = [STATE_OVERVIEW, STATE_SUBSCRIBED];
   /* <!-- Internal Constants --> */
 
@@ -34,6 +35,10 @@ States = () => {
     
     subscribed: {
       in : STATE_SUBSCRIBED,
+    },
+    
+    working : {
+      in : STATE_WORKING,
     },
     
     views : [
