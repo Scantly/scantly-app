@@ -61,7 +61,7 @@ modules:
   - generic/router
   - shared/client
   - shared/subscribe
-  - subscribed/states
+  - shared/states
   - subscribed/create
 scripts: 
   - extends/regex
@@ -102,7 +102,7 @@ scopes:
     - scope: https://www.googleapis.com/auth/drive.file
       name: View and manage Google Drive files and folders that you have opened or created with this app
       reason: To create the Scantly Spreadsheet Log in your Google Drive
-      request: login
+      request: lazy
     - scope: https://www.googleapis.com/auth/script.projects
       name: Create and update Google Apps Script projects
       reason: In order to create an end point for your service.

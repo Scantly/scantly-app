@@ -183,6 +183,9 @@ App = function() {
           subscription: {
             matches: /ID/i,
             length: 1,
+            scopes: [
+              "https://www.googleapis.com/auth/drive.file"
+            ],
             trigger : FN.states.working,
             fn: id => ಠ_ಠ.me ? FN.subscriptions(id) : ಱ.id = id,
           },
@@ -190,6 +193,9 @@ App = function() {
           subscriptions: {
             matches: /SUBSCRIPTIONS/i,
             length: 0,
+            scopes: [
+              "https://www.googleapis.com/auth/drive.file"
+            ],
             trigger : FN.states.working,
             fn: () => FN.subscriptions(),
           },
