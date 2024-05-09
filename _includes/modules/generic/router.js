@@ -10,11 +10,15 @@ Router = function() {
   /* <!-- Internal Variables --> */
 
   /* <!-- Internal Constants --> */
-  const REPLACER = (key, value) => value && (typeof value === "object" &&
+  const DELAY = ms => new Promise(resolve => setTimeout(resolve, ms)),
+        
+    REPLACER = (key, value) => value && (typeof value === "object" &&
       value.constructor === RegExp) || typeof value === "function" ? value.toString() : value,
 
     STR = value => JSON.stringify(value, REPLACER, 2),
 
+    RANDOM = prefix => `${prefix ? `${prefix}__` : ""}${Math.random().toString(36).slice(2)}`,
+        
     STRIP = (command, number) => _.isArray(command) ? _.rest(command, number ? number : 1) : _.isString(command) ? [] : command,
 
     PREPARE = (options, command) => options ?
@@ -25,24 +29,29 @@ Router = function() {
       PROPERTIES: (files, options) => options !== null && options.properties !== undefined && !_.every(_.isArray(files) ? files : [files], file => _.isMatch(_.extend({}, file.properties, file.appProperties), options.properties)) && ಠ_ಠ.Flags.log(`Google Drive Files PROPERTIES${_.isArray(files) ? "" : ` (${STR(_.extend({}, files.properties, files.appProperties))})`} not matched to ${STR(options.properties)}`, files),
     },
 
-    HANDLE = (options, resolve, reject) => files => files && (!_.isArray(files) || files.length > 0) ?
+    HANDLE = (options, resolve, reject) => files => {
+      $(document.body).removeClass("overflow-hidden");
+      return files && (!_.isArray(files) || files.length > 0) ?
       REJECT.MIME(files, options) || REJECT.PROPERTIES(files, options) ?
         reject() :
           ಠ_ಠ.Flags.log("Google Drive File/s Picked from Open", files) && 
             (options.full ? (_.isArray(files) ? 
                               Promise.all(_.map(files, file => ಠ_ಠ.Google.files.get(file.id, true, true))) : 
                               ಠ_ಠ.Google.files.get(files.id, true, true)).then(resolve) : resolve(files)) :
-        ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject(),
+        ಠ_ಠ.Flags.log("Google Drive Picker Cancelled") && reject();
+    },
 
     PICK = (picker => ({
-      single: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
-        options && options.title ? options.title : "Select a File to Open", false,
-        options && options.team !== undefined ? options.team : true, picker(options),
-        HANDLE(options, resolve, reject), null, true)),
-      multiple: options => new Promise((resolve, reject) => ಠ_ಠ.Google.pick(
-        options && options.title ? options.title : "Select a File/s to Open", true,
-        options && options.team !== undefined ? options.team : true, picker(options),
-        HANDLE(options, resolve, reject), null, true)),
+      single: options => new Promise((resolve, reject) => ($(document.body).addClass("overflow-hidden"),
+        ಠ_ಠ.Google.pick(
+          options && options.title ? options.title : "Select a File to Open", false,
+          options && options.team !== undefined ? options.team : true, picker(options),
+          HANDLE(options, resolve, reject), null, true))),
+      multiple: options => new Promise((resolve, reject) => ($(document.body).addClass("overflow-hidden"),
+        ಠ_ಠ.Google.pick(
+          options && options.title ? options.title : "Select a File/s to Open", true,
+          options && options.team !== undefined ? options.team : true, picker(options),
+          HANDLE(options, resolve, reject), null, true))),
     }))(options => () => [_.tap(new google.picker
         .DocsView(options ? google.picker.ViewId[options.view] : null)
         .setMimeTypes(options && options.mime ? options.mime : null)
@@ -78,26 +87,41 @@ Router = function() {
   /* <!-- Internal Constants --> */
 
   /* <!-- Internal Setup Constants --> */
-  const EXPAND = (routes, route, name) => {
+  const STRIP_NULLS = data => _.chain(data).omit(_.isUndefined).omit(_.isNull).omit(value => _.isArray(value) && value.length === 0).value(),
+    EXTEND = (parent, route, arrays) => {
+      var _integrate = (parent, route, property) => parent[property] ?
+        route[property] ? (_.isArray(parent[property]) ? parent[property] : [parent[property]])
+          .concat(route[property] ? route[property] : []) : parent[property] : route[property],
+          _extension = () => _.reduce(arrays, (memo, property) => _.tap(memo, memo => memo[property] = _integrate(parent, route, property)), {});
+      return _.extend(parent, _.isFunction(route) ? {
+          fn: route
+        } : route, _extension());
+    },
+    EXPAND = (routes, route, name) => {
       var _name = value => `${name ? `${name}_`: ""}${value}`,
-        _matches = value => route.matches ?
-        value.matches ? (_.isArray(route.matches) ? route.matches : [route.matches])
-        .concat(value.matches ? value.matches : []) : route.matches : value.matches,
-        _default = () => ({
+        _default = () => route.inherit === false ? {
+          matches: route.matches,
+        } : {
+          matches: route.matches,
           state: route.state,
+          all: route.all,
           length: route.length,
+          spread: route.spread,
           clean: route.clean,
           reset: route.reset,
-        }),
-        _extend = matches => ({
-          matches: matches,
-        });
+          requires: route.requires,
+          scopes: route.scopes,
+          trigger: route.trigger,
+          preserve : route.preserve,
+          tidy: route.tidy,
+        };
       _.each(route.routes, (route, name) => {
-        route = _.extend(_default(), _.isFunction(route) ? {
-          fn: route
-        } : route, _extend(_matches(route)));
+        
+        route = STRIP_NULLS(EXTEND(_default(), route, ["matches", "state", "requires", "scopes"]));
+        
         if (!routes[name = _name(name)] && route.fn)
           routes[name] = route;
+        
         if (route.routes) EXPAND(routes, route, name);
       });
       delete route.routes;
@@ -148,57 +172,69 @@ Router = function() {
           return true;
         }
       },
-      _execute = (route, command) => {
+      _execute = (route, command, singleton) => {
         
-        /* <!-- Clean up the state (before command has run) if required! --> */
-        if (route.reset) _clean(false);
-        
-        /* <!-- Tidy up visuals if required! --> */
-        if (route.trigger) ಠ_ಠ.Display.state().enter(route.trigger);
-        
-        /* <!-- Tidy up visuals if required! --> */
-        if (route.tidy) ಠ_ಠ.Display.tidy();
-        
-        var l_command = route.preserve ? 
-            route.strip && _.isNumber(route.strip) ? 
-              STRIP(command, route.strip) : command : STRIP(command, route.__length),
-          l_options = PREPARE(route.options, l_command),
-          l_result = route.fn(_.isArray(l_command) ? 
-                              l_command.length === 0 ? 
-                                null : l_command.length === 1 ? l_command[0] : l_command : l_command, l_options),
-          _complete = () => {
-            /* <!-- Clean up the state (after command has run) if required! --> */
-            if (route.clean) _clean(false);
+        var _run = after => {
+          
+          /* <!-- Clean up the state (before command has run) if required! --> */
+          if (route.reset) _clean(false);
 
-            /* <!-- Clean up the state (after command has run) if required! --> */
-            if (route.trigger) ಠ_ಠ.Display.state().exit(route.trigger);
-          };
-        
-        return l_result && l_result.then ? l_result
-          .then(result => {
-          
-            _complete();  
-          
+          /* <!-- Enter into Trigger state (if supplied) --> */
+          if (route.trigger) ಠ_ಠ.Display.state().enter(route.trigger);
+
+          /* <!-- Tidy up visuals if required! / Delay by 500ms to allow delayed tooltips to appear --> */
+          if (route.tidy) DELAY(500).then(() => ಠ_ಠ.Display.tidy(true));
+
+          var l_command = route.preserve ? 
+              route.strip && _.isNumber(route.strip) ? 
+                STRIP(command, route.strip) : command : STRIP(command, route.__length),
+            l_options = PREPARE(route.options, l_command),
+            l_process = command => decodeURIComponent(ಠ_ಠ.url ? ಠ_ಠ.url.decode(command) : command),
+            l_result = route.spread ? 
+              route.fn.apply(route.context || null, _.map(_.isArray(l_command) ? l_command : [l_command], l_process)) : 
+              route.fn(_.isArray(l_command) ? l_command.length === 0 ? null : l_command.length === 1 ? l_command[0] : l_command : l_command, l_options),
+            _complete = () => {
+              /* <!-- Clean up the state (after command has run) if required! --> */
+              if (route.clean) _clean(false);
+
+              /* <!-- Clean up the state (after command has run) if required! --> */
+              if (route.trigger) ಠ_ಠ.Display.state().exit(route.trigger);
+              
+              /* <!-- Run after, if supplied! --> */
+              if (after) after();
+            },
+            _return = result => (_complete(), result);
+
+          return l_result && l_result.then ? l_result
             /* <!-- Run the success function if available --> */
-            return route.success ? route.success(
-              _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
-              result : {
-                command: l_command,
-                result: result
-              }) : true;
-          })
-          .catch(route.failure ? route.failure :
-            e => e ?
-            ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false) : (_complete(), l_result);
+            .then(result => route.success ? route.success(
+                _.isObject(result) && _.has(result, "command") && _.has(result, "result") ?
+                result : {
+                  command: l_command,
+                  result: result
+                }) : true)
+            .catch(route.failure ? route.failure :
+              e => e ?
+              ಠ_ಠ.Flags.error(`Route: ${STR(route)} FAILED`, e).negative() : false)
+            .then(_return) : _return(l_result);
+        
+        };
+        
+        /* <!-- Check the Singleton State before running --> */
+        return singleton ? ಠ_ಠ.Display.state().in(singleton) ? null : 
+          _run((() => () => ಠ_ಠ.Display.state().exit(singleton))(ಠ_ಠ.Display.state().enter(singleton))) : 
+          _run();
+        
       },
-      _shortcut = (route, debug, name, key) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
+      _shortcut = singleton => (route, debug, name, key) => () => (!route.state || ಠ_ಠ.Display.state().in(route.state, route.all ? false : true)) ? 
                 (!debug || ಠ_ಠ.Flags.log(`Keyboard Shortcut ${key} routed to : ${name}`)) && 
                   (Promise.all([
                     route.requires ? REQUIRES(route.requires) : Promise.resolve(true),
                     route.scopes ? SCOPES(route.scopes) : Promise.resolve(true)
                   ]))
                   .then(results => route.permissive || _.every(results) ? 
-                        _execute(route, null) : (ಠ_ಠ.Flags.log(`Route ${name} is not permissive and preconditions failed:`, results), false)) : false;
+                        _execute(route, null, singleton) : 
+                        (ಠ_ಠ.Flags.log(`Route ${name} is not permissive and preconditions failed:`, results), false)) : false;
   /* <!-- Internal Functions --> */
 
   /* <!-- External Visibility --> */
@@ -236,20 +272,24 @@ Router = function() {
         test : Tests whether app has been used (for cleaning purposes)
         clear : Function to execute once exited / cleared (after logout)
         center : Whether help / instruction dialogs should be centered
+        singular : Only one route can be run at a time (regardless of whether a route function is synchronous or a promise). This can be a string, representing the state to enter / exit while the route is being processed, or a true boolean if the state should be automatically generated.
         route : App-Specific Router Command (if all other routes have not matched)
         routes : {
         	// Default routes (apart from AUTH/UNAUTH) can be switched off by setting active property to false (DEFAULT is ON).
         	// All default routes can be functions, or contain a function as the fn property (which is mandatory for non-default routes).
           // All routes are specified by the regexes in the ROUTES constant below, or can be overridden with a regex property.
-          // All routes can have a state property, which is a string or array of strings indicating the states in which the route is valid
+          // All routes can have a state property, which is a string or array of strings indicating the states in which the route is valid (use the all property to declare whether array of states is and/or - default is or)
           // All routes can have a qualifier function (taking command as a parameter) to further refine matching
           // All routes can have a length (will check array length after initial regex match), which can be a number or a min|max object
+          // All routes can have a spread boolean (which will expand and process command parameters before passing them to result function) - this is not compatible with function options
+          // Routes that spread their commands into the result function can also take a context property which will be passed as the 'this' context to consuming functions
           // All routes can have a next regex that is tested after initial regex match
           // All routes can be flagged to 'tidy' if they should clean up any popovers etc before running
           // All routes can have a trigger state, which is triggered while the route is running (promise or synchronous)
           // All routes can be flagged to 'preserve' if they should call their fn property with the full command. If a numerical value is also supplied via a strip property, then this number of commands will be removed from the command array.
           // All promise returning routes can have a success({command, result}) and failure(e) methods attached
           // All routes can have a clean property which, if truthy, will call a state clean upon success
+          // All parent routes can have an inherit property (set to false, means that only matches is transferred to child routes)
           // Extra configuration options for default routes are shown in methods below.
         },
 				instructions : App-Specific Instructions
@@ -260,19 +300,19 @@ Router = function() {
       /* <!-- Default Routes, can be overridden by the routes object in options --> */
       const ROUTES = {
         create: {
-          matches: /CREATE/i,
+          matches: /^CREATE(\.\S+|$)/i,
           fn: () => false,
           /* <!-- Returning False will mean route fall-through to app route --> */
         },
         open: {
-          matches: /OPEN/i,
+          matches: /^OPEN(\.\S+|$)/i,
           requires: "google",
           /* <!-- OPTIONS: Multiple | Single property dictates files returned, all others passed through to picker method -->  */
           fn: (command, options) => options && options.mutiple ?
             PICK.multiple(options) : PICK.single(options),
         },
         load: {
-          matches: /LOAD/i,
+          matches: /^LOAD(\.\S+|$)/i,
           length: {
             min: 1
           },
@@ -307,12 +347,13 @@ Router = function() {
           }),
         },
         save: {
-          matches: /SAVE/i,
+          matches: /^SAVE(\.\S+|$)/i,
           fn: () => false,
           /* <!-- Returning False will mean route fall-through to app route --> */
         },
         import: {
-          matches: /IMPORT/i,
+          matches: /^IMPORT(\.\S+|$)/i,
+          length: 0,
           fn: (command, options) => new Promise((resolve, reject) => {
             ಠ_ಠ.Display.files({
                 id: options.id ? options.id : "prompt_file",
@@ -327,21 +368,21 @@ Router = function() {
           }),
         },
         export: {
-          matches: /EXPORT/i,
+          matches: /^EXPORT(\.\S+|$)/i,
           fn: () => false,
           /* <!-- Returning False will mean route fall-through to app route --> */
         },
         clone: {
-          matches: /CLONE/i,
+          matches: /^CLONE(\.\S+|$)/i,
           fn: () => false,
           /* <!-- Returning False will mean route fall-through to app route --> */
         },
         close: {
-          matches: /CLOSE/i,
+          matches: /^CLOSE(\.\S+|$)/i,
           fn: () => _clean(true),
         },
         tutorials: { /* <!-- Show App Tutorials --> */
-          matches: /TUTORIALS/i,
+          matches: /^TUTORIALS$/i,
           fn: () => ಠ_ಠ.Display.doc.show({
             name: "TUTORIALS",
             title: `Tutorials for ${options.name ? options.name : "App"} ...`,
@@ -351,27 +392,27 @@ Router = function() {
           }).modal("show"),
         },
         remove: {
-          matches: /REMOVE/i,
+          matches: /^REMOVE(\.\S+|$)/i,
           length: 1,
           fn: command => ಠ_ಠ.Recent.remove(command).then(id => $(`#${id}`).remove()),
         },
         routes: { /* <!-- Debug Show all Routes --> */
-          matches: /ROUTES/i,
+          matches: /^ROUTES$/i,
           fn: () => _.each(_options.routes, (route, key) => ಠ_ಠ.Flags.log(`Registered Route: ${key}`, route))
         },
         spin: {
-          matches: /SPIN/i,
+          matches: /^SPIN$/i,
           fn: () => ಠ_ಠ.Display.busy({
             target: ಠ_ಠ.container
           }),
         },
         experiments: { /* <!-- Turn on Experimental Features --> */
-          matches: /EXPERIMENTS/i,
+          matches: /^EXPERIMENTS$/i,
           length: 0,
           fn: () => ಠ_ಠ.Display.state().toggle(STATE_EXPERIMENTS),
         },
         instructions: { /* <!-- Show App Instructions --> */
-          matches: /INSTRUCTIONS/i,
+          matches: /^INSTRUCTIONS(\.\S+|$)/i,
           keys: ["i", "I"],
           fn: command => {
 
@@ -402,7 +443,7 @@ Router = function() {
           },
         },
         help: { /* <!-- Request Help --> */
-          matches: /HELP/i,
+          matches: /^HELP$/i,
           fn: () => ಠ_ಠ.Help.provide(ಠ_ಠ.Flags.dir()),
         }
       };
@@ -419,6 +460,9 @@ Router = function() {
             delete list[key];
           }),
         });
+        
+        /* <!-- Set Up Singular State --> */
+        _options.singleton = options.singular ? options.singular === true ? RANDOM("singleton") : options.singular : null;
 
         /* <!-- Recursively Expand Child Routes --> */
         _.each(_options.routes, (route, name) =>
@@ -433,7 +477,7 @@ Router = function() {
           /* <!-- Bind Shortcut key/s if required --> */
           if (route.keys && (!route.length || route.length === 0)) {
             route.keys = _.isArray(route.keys) ? route.keys : [route.keys];
-            _.each(route.keys, key => window.Mousetrap.bind(key, (_shortcut)(route, debug, name, key)));
+            _.each(route.keys, key => window.Mousetrap.bind(key, (_shortcut(_options.singleton))(route, debug, name, key)));
           }
         }) : true;
         _touch = debug => window.Hammer ? _.each(_options.routes, (route, name) => {
@@ -490,7 +534,7 @@ Router = function() {
 
         if (!_options) SETUP();
 
-        if (!command || command === false || command[0] === false || (/PUBLIC/i).test(command)) {
+        if (!command || command === false || command[0] === false || (/^PUBLIC$/i).test(command)) {
 
           /* <!-- Clear the existing state (in case of logouts) --> */
           /* <!-- command[1] = true when logging out --> */
@@ -505,7 +549,7 @@ Router = function() {
             clear: !ಠ_ಠ.container || ಠ_ಠ.container.children().length !== 0
           });
 
-        } else if (command === true || /AUTH/i.test(command) || (command && command[0] === true && command.length == 2)) {
+        } else if (command === true || /^AUTH$/i.test(command) || (command && command[0] === true && command.length == 2)) {
 
           /* <!-- Check the setup --> */
           _setup = _setup ? _setup() : _setup;
@@ -547,9 +591,9 @@ Router = function() {
                     (handled_Scopes === null || handled_Scopes === undefined ? (handled_Scopes = true) : false) && _route.scopes ?
                       SCOPES(_route.scopes) : Promise.resolve(handled_Scopes)
                   ]).then(results => _route.permissive || _.every(results) ? 
-                        _execute(_route, command) : 
+                        _execute(_route, command, _options.singleton) : 
                         (ಠ_ಠ.Flags.log("Route is not permissive and preconditions failed:", results), false)) :
-                      _execute(_route, command))) === false ? (_handled = false) : true : (_handled = false);
+                      _execute(_route, command, _options.singleton))) === false ? (_handled = false) : true : (_handled = false);
 
           /* <!-- Log is available, so debug log --> */
           if (_handled && _debug) ಠ_ಠ.Flags.log(`Routed to: ${STR(_route)} with: ${STR(command)}`);
@@ -559,12 +603,15 @@ Router = function() {
         /* <!-- Record the last command --> */
         _last = command;
 
-        /* <!-- Route to App-Specific Command --> */
-        if (_options.route) _executions.app = _options.route(_handled, command);
+        /* <!-- Local Route Resolution--> */
+        _executions.local = Promise.resolve(_executions.local);
+        
+        /* <!-- Route to App-Specific Command (once local has been resolved) --> */
+        if (_options.route) _executions.app = _executions.local.then(() => _options.route(_handled, command));
 
         return Promise.all([
-          Promise.resolve(_executions.local),
-          Promise.resolve(_executions.app)
+          _executions.local,
+          _executions.app
         ]);
         
       };

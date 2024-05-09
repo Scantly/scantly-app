@@ -24,7 +24,7 @@ Link = (options, factory) => {
     large: false,
     hide_link: false,
     force_qr: false,
-    qr_url: "https://chart.googleapis.com/chart",
+    qr_url: "https://zxing.org/w/chart",
     qr_encoding: "ISO-8859-1",
     qr_size: 540,
     qr_tolerance: "M",

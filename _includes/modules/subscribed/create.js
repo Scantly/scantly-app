@@ -25,7 +25,8 @@ Create = (options, factory) => {
         open: /\[\s*{/gi,
         close: /}\s*\]/gi
       }
-    }
+    },
+    script : "register.json",
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -120,7 +121,7 @@ Create = (options, factory) => {
       return (ರ‿ರ.latest = _version);
     },
     
-    code : () => window.fetch ? window.fetch("/client/register.json?d=" + Date.now(), {cache: "no-store"})
+    code : () => window.fetch ? window.fetch(`/client/${options.script}?d=${Date.now()}`, {cache: "no-store"})
       .then(response => response.status == 200 ? response.json() : false) : Promise.resolve(false),
     
     key : (files, key) => {

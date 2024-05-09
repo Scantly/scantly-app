@@ -8,7 +8,7 @@ Code = (options, factory) => {
   /* <!-- Internal Constants --> */
   const DEFAULTS = {
     id: "cards",
-    qr_url: "https://chart.googleapis.com/chart",
+    qr_url: "https://zxing.org/w/chart",
     qr_encoding: "ISO-8859-1",
     qr_size: 540,
     qr_tolerance: "M", /* <!-- L = up to 7% data loss | M 15% | Q 25% | H 30%--> */
@@ -67,15 +67,27 @@ Code = (options, factory) => {
     }
     
     /* <!-- Output Cards --> */
-    return Promise.resolve(factory.Display.template.show({
+    var _output = factory.Display.template.show({
           template: "cards",
           instructions: factory.Display.doc.get("CARDS", null, true),
           id: options.id,
           cards: _cards,
           target: factory.container,
           clear: true,
-        }));
+        });
     
+    _output.find("a[data-fullscreen], button[data-fullscreen]").on("click.on_fullscreen", e => {
+      factory.Display.tidy();
+      var _target = document.getElementById(e.target.dataset.fullscreen);
+      if (_target && window.screenfull) screenfull.request(_target)
+          .then(() =>$(_target).off("click.off_fullscreen").on("click.off_fullscreen", () => screenfull.exit()
+                                                     .then(() => $(_target).off("click.off_fullscreen"))
+                                                     .catch(e => factory.Flags.error("Fullscreen Error", e))))
+          .catch(e => factory.Flags.error("Fullscreen Error", e))
+    });
+    
+    return Promise.resolve(_output);
+        
   };
   
   FN.locations = locations => {

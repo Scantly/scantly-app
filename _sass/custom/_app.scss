@@ -83,11 +83,12 @@
 }
 
 .btn-outline-action {
-  color: $colour-highlight;
-  border-color: $colour-highlight;
+  color: $colour-highlight !important;
+  border-color: $colour-highlight !important;
+  background-color: transparentize($colour-background, 0.2) !important;
 	&:hover {
-    color: $colour-background;
-		border-color: $colour-highlight;
+    color: $colour-background !important;
+		border-color: $colour-highlight !important;
 		background-color: $colour-highlight !important;
 	}
 	&:focus {

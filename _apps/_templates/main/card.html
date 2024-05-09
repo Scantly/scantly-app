@@ -3,26 +3,31 @@
   <div class="text-center p-0">
     <div class="card-header border-success text-primary font-weight-bold">
       <div class="d-flex flex-row justify-content-{{#if icon}}between{{else}}around{{/if}}">
-        <a data-toggle="collapse" href="#{{id}}_QR_FULL">{{name}}</a>
+        <a data-fullscreen="{{id}}_QR_CODE" href="#" data-toggle="tooltip" title="Click for fullscreen version">{{name}}</a>
         {{~#if icon}}<span class="material-icons text-success"{{#if icon_title}} data-toggle="tooltip" title="{{icon_title}}{{/if}}">{{icon}}</span>{{~/if~}}
       </div>
     </div>
     <div class="card-body p-0">
-      <img class="img-fluid mx-auto d-block rounded" src="{{{qr}}}" />	
+      <img id="{{id}}_QR_CODE" class="img-fluid mx-auto d-block rounded" src="{{{qr}}}" />	
     </div>
     <div class="card-footer bg-transparent border-success text-muted">
       <div class="d-flex flex-row justify-content-between">
-        {{~#if link~}}<a href="#" data-toggle="tooltip" title="Click to copy QR Code Link"
-                         class="link" data-clipboard-text="{{link}}">
-          <span class="material-icons">link</span>
-        </a>{{~/if~}}
-        {{~#unless link~}}<a href="#" onclick="event.preventDefault(); saveAs('{{{qr}}}', '{{name}}{{#if notes}} - {{notes}}{{/if}}.png');">
-          <span class="material-icons">file_download</span>
-        </a>{{~/unless~}}
+        {{~#if link~}}<span data-toggle="tooltip" title="Click to copy QR Code Link">
+          <a href="#" class="link" data-clipboard-text="{{link}}">
+            <span class="material-icons">link</span>
+          </a>
+        </span>{{~/if~}}
+        {{~#unless link~}}<span data-toggle="tooltip" title="Click to download QR Code">
+          <a href="#" onclick="event.preventDefault(); factory.Display.tidy(); saveAs('{{{qr}}}', '{{name}}{{#if notes}} - {{notes}}{{/if}}.png');">
+            <span class="material-icons">file_download</span>
+          </a>
+        </span>{{~/unless~}}
         {{~#if notes~}}<span>{{notes}}</span>{{~/if~}}
-        <a data-toggle="collapse" href="#{{id}}_QR_FULL" data-toggle="tooltip" title="Click for printable version">
-          <span class="material-icons">print</span>
-        </a>
+        <span data-toggle="tooltip" title="Click for printable version">
+          <a data-toggle="collapse" href="#{{id}}_QR_FULL">
+            <span class="material-icons">print</span>
+          </a>
+        </span>
       </div>
     </div>
   </div>

@@ -62,11 +62,6 @@ Subscribe = (options, factory) => {
     return FN.action(user.user, user.key, user.algorithm)("subscriptions", id ? {id: id} : null);
   };
   
-  FN.benefits = (user, id) => {
-    factory.Flags.log(`Fetching Benefit${id ? ` ${id}` : "s"} for:`, user.email);
-    return FN.action(user.user, user.key, user.algorithm)("benefits", id ? {id: id} : null);
-  };
-  
   FN.endpoint = (user, id, code, endpoint) => {
     factory.Flags.log(`Updating Endpoint for Subscription ${id}:`, endpoint);
     return FN.action(user.user, user.key, user.algorithm)("endpoint", {id: id, code: code, endpoint: endpoint});

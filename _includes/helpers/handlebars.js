@@ -85,6 +85,9 @@ Handlebars = (options, factory) => {
       Handlebars.registerHelper("stringify", variable => variable ?
         JSON.stringify(variable) : "");
 
+      Handlebars.registerHelper("base64", variable => variable ?
+        factory.Strings ? factory.Strings().base64.encode(variable) : encodeURIComponent(variable) : "");
+      
       Handlebars.registerHelper("encode", variable => variable ?
         factory.url ? factory.url.encode(encodeURIComponent(variable)) : encodeURIComponent(variable) : "");
 
@@ -160,6 +163,11 @@ Handlebars = (options, factory) => {
             variable.toDate() : variable instanceof Date ? variable : false))) return;
         return variable.toLocaleTimeString();
       });
+      
+      Handlebars.registerHelper("localeString", variable => {
+        if (variable === null || variable === undefined) return;
+        return isNaN(variable) || !variable.toLocaleString ? variable : variable.toLocaleString();
+      });
 
       Handlebars.registerHelper("fromNow", (variable, short) => {
         if (!variable || !(variable._isAMomentObject || (window.dayjs && dayjs.isDayjs(variable)))) return;
@@ -172,7 +180,7 @@ Handlebars = (options, factory) => {
 
       Handlebars.registerHelper("formatYaml", (variable, field) => {
         if (variable !== null && variable !== undefined && window.jsyaml)
-          return jsyaml.safeDump(_.omit(variable[field] || variable, (value, key) => value === null || value === undefined || key == "__class"), {
+          return jsyaml.dump(_.omit(variable[field] || variable, (value, key) => value === null || value === undefined || key == "__class"), {
             skipInvalid: true
           });
       });
@@ -312,6 +320,16 @@ Handlebars = (options, factory) => {
       
       Handlebars.registerHelper("truthy", value => !!value);
       
+      Handlebars.registerHelper("resolve", function() {
+        return _.reduce(Array.prototype.slice.call(arguments, 1, arguments.length - 1), 
+          (memo, property) => memo ? memo[property] : null, Array.prototype.slice.call(arguments, 0, 1)[0]);
+      });
+      
+      Handlebars.registerHelper("md5", value => value && (typeof value === "string" || value instanceof String) ? 
+                                window.SparkMD5 ? SparkMD5.hash(value) : 
+                                window.CryptoJS ? CryptoJS.MD5(value) : 
+                                value : value);
+      
       /* <!-- Map all templates as Partials too --> */
       if (Handlebars.templates) Handlebars.partials = Handlebars.templates;
 
@@ -333,6 +351,8 @@ Handlebars = (options, factory) => {
     template: _template,
     
     username: _username,
+    
+    bytes: _bytes,
     /* <!-- External Functions --> */
 
   };

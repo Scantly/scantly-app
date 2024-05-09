@@ -60,11 +60,23 @@ Display = function() {
   };
 
   var _tooltips = (targets, options) => {
-    if (targets && targets.tooltip) targets.tooltip(_.defaults(options ? options : {}, {
-      placement: _placement
-    }));
+    if (targets && targets.tooltip) {
+      targets.tooltip(_.defaults(options ? options : {}, {
+        placement: _placement
+      }));
+      targets.filter("a[target='_blank']")
+        .off("click.tooltip-clear")
+        .on("click.tooltip-clear", e => $(e.target || e.currentTarget).tooltip("dispose"));
+    }
   };
-
+  
+  var _decorate = targets => targets.filter("[href]").each(
+    (i, el) => {
+      el.href = !el.href || el.href.indexOf("#") === 0 ? el.href : ಠ_ಠ.Flags.decorate(el.href);
+      if (el.dataset && el.dataset.href && el.dataset.href.indexOf("#") < 0)
+        el.dataset.href = ಠ_ಠ.Flags.decorate(el.dataset.href);
+    });
+  
   var _hover = (e, toggle) => {
     var _this = $(e.currentTarget),
       _targets = _this.data("targets"),
@@ -126,7 +138,7 @@ Display = function() {
   };
 
   var _modal = run => {
-      var _modals = $(".modal.show[role='dialog']"),
+      var _modals = $(".modal.show[role='dialog'][data-active='true']"),
         _after = fn => {
           if (run && _.isFunction(run)) run();
           if (fn && _.isFunction(fn)) fn();
@@ -146,7 +158,13 @@ Display = function() {
       }
     },
     _modalise = (element, fn) => {
-      element.on("hide.bs.modal", () => $("div.modal-backdrop.d-none").removeClass("d-none"));
+      /* <!-- Handle Modal chaining by indicating this is active --> */
+      element.data("active", true);
+      element.on("hide.bs.modal", e => {
+        /* <!-- Handle Modal chaining by indicating this is now inactive --> */
+        $(e.currentTarget).data("active", false);
+        $("div.modal-backdrop.d-none").removeClass("d-none");
+      });
       element.on("hidden.bs.modal", _modal(() => element.remove() && (fn && _.isFunction(fn) ? fn() : true)));
       return element;
     };
@@ -158,6 +176,7 @@ Display = function() {
     _tooltips(value.find("[data-toggle='tooltip'], [data-tooltip='true']").add(value.filter("[data-toggle='tooltip'], [data-tooltip='true']")));
     _expands(value.find("[data-toggle='expand'], [data-expand='true']").add(value.filter("[data-toggle='expand'], [data-expand='true']")));
     _hovers(value.find("[data-toggle='hover'], [data-hover='true']").add(value.filter("[data-toggle='hover'], [data-hover='true']")));
+    _decorate(value.find("[data-decorate]"));
     return value;
   };
 
@@ -190,10 +209,18 @@ Display = function() {
     });
   };
 
-  var _clean = () => $("div.modal-backdrop.show").last().remove() &&
-    $("body.modal-open").removeClass("modal-open"); /* <!-- Weird Modal Not Hiding Bug --> */
+  var _clean = () =>  $(".modal.show[role='dialog']").length === 0 ? $("div.modal-backdrop.show").last().remove() &&
+    $("body.modal-open").removeClass("modal-open") : null; /* <!-- Weird Modal Not Hiding Bug --> */
 
-  var _tidy = () => $("div.tooltip.show").last().remove(); /* <!-- Tooltips Not Hiding --> */
+  var _tidy = everything => {
+    var _remove = $("div.tooltip.show");
+    if (_log) _log("Tidying Tooltips:", _remove.length);
+    _remove.last().remove();
+    
+    if (everything) {
+      $(".dropdown-toggle").dropdown("hide"); 
+    }
+  }; /* <!-- Tooltips / Dropdowns Not Hiding --> */
 
   var _toggle = (state, toggle, container, all) => {
 
@@ -222,7 +249,7 @@ Display = function() {
 
   var _breakpoint = size => $(`div.bs-breakpoints span.${size}`).css("display") == "block";
 
-  var _dialog = (dialog, options, handler) => {
+  var _dialog = (dialog, options, handler, validator) => {
 
     if ((options.actions || options.handlers) &&
       dialog.find("button[data-action], a[data-action]").length > 0) {
@@ -237,8 +264,29 @@ Display = function() {
               while (_action.length > 0) {
                 _fn = _fn && _fn.actions ? _fn.actions[_action.shift()] : null;
               }
-              if (_fn && _fn.handler) _fn.handler(handler ? handler() : ಠ_ಠ.Data ? ಠ_ಠ.Data({},
-                ಠ_ಠ).dehydrate(dialog.find("form")) : dialog.find("form").serializeArray(), dialog);
+              
+              if (_fn && _fn.handler) {
+                var _complete = values => _fn.handler(handler ? handler() : values, dialog);
+                
+                if (_fn.validate) {
+                  
+                  /* <!-- Run through the supplied validator before continuing (false === invalid) --> */
+                  var _values = validator();
+                  if (_values === false) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  } else {
+                    _complete(_values);
+                  }
+                  
+                } else {
+                  
+                  _complete(ಠ_ಠ.Data ? ಠ_ಠ.Data({},
+                    ಠ_ಠ).dehydrate(dialog.find("form")) : dialog.find("form").serializeArray());
+                  
+                }
+                
+              }
             }
           } else if (options.handlers && options.handlers[_action]) {
             options.handlers[_action](_target, dialog, options);
@@ -292,6 +340,7 @@ Display = function() {
         trigger: "hover"
       });
       _tooltips($("[data-toggle='tooltip']"));
+      _decorate($("[data-decorate]"));
 
       /* <!-- Enable Closing Bootstrap Menu after Action --> */
       var navMain = $(".navbar-collapse");
@@ -305,6 +354,8 @@ Display = function() {
     popovers: (targets, options) => _popovers(targets, options),
 
     tooltips: (targets, options) => _tooltips(targets, options),
+    
+    decorate: targets => _decorate(targets),
 
     commarise: value => _commarise(value),
 
@@ -546,12 +597,13 @@ Display = function() {
         if (!options) return reject();
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("confirm")(options));
+        var dialog = $(_template("confirm")(options)),
+            confirmed;
 
-        _target(options).append(_modalise(dialog, reject));
+        _target(options).append(_modalise(dialog, () => confirmed ? resolve(confirmed) : reject()));
 
         /* <!-- Set Event Handlers --> */
-        dialog.find(".modal-footer button.btn-primary").click(() => _clean() && resolve(true));
+        dialog.find(".modal-footer button.btn-primary").click(() => (confirmed = true) && _clean());
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
         dialog.on("shown.bs.modal", shown ? () => shown(dialog) : () => _visuals(dialog));
@@ -606,36 +658,45 @@ Display = function() {
           resolver = () => resolve();
 
         if (dialog.find("form").length > 0) {
+          
+          var _validator = () => {
+            
+            var _valid = true;
+            _.each(dialog.find("form.needs-validation"), form => {
+              if (form.checkValidity() === false) _valid = false;
+              form.classList.add("was-validated");
+            });
+
+            var _form = dialog.find("form"),
+              _values = ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form) : _form.serializeArray();
+            if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({
+              name: el.name,
+              value: "all"
+            }));
+
+            /* <!-- Log is available, so debug log --> */
+            if (_log) _log(`Parsed Values from Template: ${template} using ${ಠ_ಠ.Data ? "the Data helper" : "serializeArray"}`, _values);
+
+            if (options.validate && !options.validate(_values, _form)) _valid = false;
+            
+            return _valid ? _values : false;
+            
+          };
 
           /* <!-- Set Form / Return Event Handlers --> */
           if (dialog.find(".modal-footer button.btn-primary").length > 0) {
 
             dialog.find(".modal-footer button.btn-primary").on("click.submit", e => {
 
-              var _valid = true;
-              _.each(dialog.find("form.needs-validation"), form => {
-                if (form.checkValidity() === false) _valid = false;
-                form.classList.add("was-validated");
-              });
-
-              var _form = dialog.find("form"),
-                _values = ಠ_ಠ.Data ? ಠ_ಠ.Data({}, ಠ_ಠ).dehydrate(_form) : _form.serializeArray();
-              if (!ಠ_ಠ.Data) _.each(_form.find("input:indeterminate"), el => _values.push({
-                name: el.name,
-                value: "all"
-              }));
-
-              /* <!-- Log is available, so debug log --> */
-              if (_log) _log(`Parsed Values from Template: ${template} using ${ಠ_ಠ.Data ? "the Data helper" : "serializeArray"}`, _values);
-
-              if (options.validate && !options.validate(_values, _form)) _valid = false;
-              if (_valid) {
-                _clean();
-                resolver = () => resolve(_values);
-              } else {
+              var _values = _validator();
+              if (_values === false) {
                 e.preventDefault();
                 e.stopPropagation();
+              } else {
+                _clean();
+                resolver = () => resolve(_values);
               }
+              
             });
 
             /* <!-- Handle Enter Key (if simple) --> */
@@ -644,7 +705,7 @@ Display = function() {
           }
 
           /* <!-- Wire Up Action and Update Handlers --> */
-          _dialog(dialog, options);
+          _dialog(dialog, options, null, _validator);
 
         }
 
@@ -656,10 +717,13 @@ Display = function() {
           () => {
             _clean();
             dialog.modal("hide");
+            /* <!-- 2020-12-04 | Added to allow click outs from modals to correctly resolve for singleton routing --> */
+            resolve();
           });
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
-        dialog.on("shown.bs.modal", _.compose(() => dialog.find("textarea:visible, input:visible").first().focus(), shown ? () => shown(dialog) : () => _visuals(dialog)));
+        dialog.on("shown.bs.modal", _.compose(() => dialog.find("textarea:visible, input:visible").first().focus(), shown ? 
+                                                () => shown(dialog) : () => _visuals(dialog)));
 
         /* <!-- Show the Modal Dialog --> */
         dialog.modal({
@@ -745,10 +809,9 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Choice Dialog --> */
-        var dialog = $(_template("choose")(options)),
-          parsed;
+        var dialog = $(_template("choose")(options)), parsed, resolved;
 
-        _target(options).append(_modalise(dialog, () => _.isEmpty(parsed) ? reject() : resolve(parsed)));
+        _target(options).append(_modalise(dialog, () => _.isEmpty(parsed) ? reject() : resolved ? null : (resolved = true) && resolve(parsed)));
 
         /* <!-- Parsing Method --> */
         var choice = () => {
@@ -778,7 +841,8 @@ Display = function() {
               e.preventDefault();
               e.stopPropagation();
             } else if ($(e.currentTarget).is(".btn-primary")) {
-              _.tap(parse(true, _values), value => value ? resolve(value) : false);
+              options.chain ? parse(false, _values) : _.tap(parse(true, _values), 
+                  value => value ? resolved ? null : (resolved = true) && resolve(value) : false);
             }
           });
 
@@ -816,10 +880,11 @@ Display = function() {
 
         if (!options || !options.list || !options.choices) return reject();
 
-        /* <!-- Great Modal Options Dialog --> */
-        var dialog = $(_template("options")(options));
+        /* <!-- Create Modal Options Dialog --> */
+        var dialog = $(_template("options")(options)), _return, _resolved;
 
-        _target(options).append(_modalise(dialog, reject));
+        /* <!-- Modalise, handles Hidden event which will reject unless data available for resolving --> */
+        _target(options).append(_modalise(dialog, () => _return ? _resolved ? null : resolve(_return) : reject()));
 
         dialog.find("a.dropdown-item").on("click.toggler", (e) => $(e.target).closest(".input-group-append, .input-group-prepend").children("button")[0].innerText = e.target.innerText);
         dialog.find("a[data-toggle='tooltip'], a[data-tooltip='true']").tooltip({
@@ -830,7 +895,7 @@ Display = function() {
 
         /* <!-- Set Event Handlers --> */
         dialog.find(".modal-footer button.btn-primary").click(() => {
-          var _return = [];
+          _return = [];
           dialog.find("div.input-group").each(function() {
             var e = $(this);
             _return.push({
@@ -838,7 +903,7 @@ Display = function() {
               value: e.find("button").text()
             });
           });
-          resolve(_return);
+          _resolved ? null : (_resolved = true) && resolve(_return);
         });
 
         /* <!-- Set Shown Event Handler (if present, otherwise use default visuals / popovers etc) --> */
@@ -999,9 +1064,9 @@ Display = function() {
         options.__LONG = (_length > MAX_ITEMS);
 
         /* <!-- Great Modal Options Dialog --> */
-        var dialog = $(_template("action")(options));
+        var dialog = $(_template("action")(options)), _return, _resolved;
 
-        _target(options).append(_modalise(dialog, reject));
+        _target(options).append(_modalise(dialog, () => _return ? _resolved ? null : resolve(_return): reject()));
 
         dialog.find("a[data-toggle='tooltip'], a[data-tooltip='true']").tooltip({
           animation: false,
@@ -1017,11 +1082,12 @@ Display = function() {
           _clean();
 
           var _this = $(this),
-            _action = options.actions[_this.data("action")];
-          resolve({
+              _action = options.actions[_this.data("action")];
+          _return = {
             action: _action,
             option: _action.options ? _action.options[_this.parents(".action").find("select option:selected").val()] : null
-          });
+          };
+          _resolved ? null : (_resolved = true) && resolve(_return);
 
         });
 

@@ -208,6 +208,7 @@ App = function() {
               "https://www.googleapis.com/auth/script.deployments",
             ],
             length: 1,
+            tidy: true,
             fn: code => ಱ.subscription && code == ಱ.subscription.code ?
                           FN.create.log(`${ಱ.subscription.organisation} | Log`, ಱ.subscription.id)
                             .then(id => ಠ_ಠ.Google.scripts.create(`${ಱ.subscription.organisation} | Log | Script`, ಱ.spreadsheet = id))
@@ -254,9 +255,11 @@ App = function() {
               "https://www.googleapis.com/auth/script.deployments",
             ],
             length: 1,
+            tidy: true,
             fn: id => {
               var _subscription = ಱ.subscriptions ?
-                  _.find(ಱ.subscriptions, subscription => subscription.id == id) : ಱ.subscription;
+                  _.find(ಱ.subscriptions, 
+                          subscription => subscription.id == id || (subscription.file && subscription.file.id == id)) : ಱ.subscription;
               return _subscription ? FN.create.script(FN.create.script_id.get(_subscription.file), _subscription.public)
                 .then(script => Promise.all([ಠ_ಠ.Google.scripts.versions(script).list(), script]))
                 .then(results => {
