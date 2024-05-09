@@ -12,7 +12,7 @@ Code = (options, factory) => {
     qr_encoding: "ISO-8859-1",
     qr_size: 540,
     qr_tolerance: "M", /* <!-- L = up to 7% data loss | M 15% | Q 25% | H 30%--> */
-    qr_margin: 6,
+    qr_margin: 6, /* |${options.qr_margin} */
   }, FN = {};
   /* <!-- Internal Constants --> */
 
@@ -25,7 +25,7 @@ Code = (options, factory) => {
   /* <!-- Internal Functions --> */
   
   /* <!-- Internal Functions --> */
-  var _qr = link => `${options.qr_url}?cht=qr&chs=${options.qr_size}x${options.qr_size}&choe=${options.qr_encoding}&chld=${options.qr_tolerance}|${options.qr_margin}&chl=${encodeURIComponent(link)}`;
+  var _qr = link => `${options.qr_url}?cht=qr&chs=${options.qr_size}x${options.qr_size}&choe=${options.qr_encoding}&chld=${options.qr_tolerance}&chl=${encodeURIComponent(link)}`;
   
   var _link = (persistent, route, value) => factory.Flags.full(`${persistent ? "?i=" : "#"}${route}.${value}`);
   
