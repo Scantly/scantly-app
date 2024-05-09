@@ -1,4 +1,12 @@
 site :
+  0.3.2 :
+    name : Site v0.3.2
+    desc : Beta Version
+    numeric : 0.3.2.0
+    type:
+      - beta
+    changes :
+      - Replaced Google QR Generator
   0.3.1 :
     name : Site v0.3.1
     desc : Beta Version
